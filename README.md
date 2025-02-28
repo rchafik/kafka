@@ -52,7 +52,7 @@ sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule require
 kafka-broker-api-versions.sh --bootstrap-server bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 --command-config kafkasasl.properties
 ```
 
-**Certificado para configurar truststore.jkk**
+**Certificado para configurar truststore.jks**
 
 https://cacerts.digicert.com/DigiCertGlobalRootG2.crt.pem?_gl=1*1c1f9jy*_gcl_au*MTk2Mjc0ODc1LjE3NDA2ODAzNTM.
 
@@ -65,5 +65,5 @@ keytool -keystore truststore.jks -storepass password -alias oracle -import -file
 # Tasks
 - [x] Produtor e Consumidor Streming
 - [x] Produtor e Consumidor SASL-SCRAM
-- [ ] Produtor e Consumidor mTLS
+- [x] Produtor e Consumidor mTLS
 - [ ] Rever boas práticas, como armazenar os artefatos de segurança em vault ou bucket
