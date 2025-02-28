@@ -1,1 +1,21 @@
-teste
+Streaming
+
+
+Kafka
+
+#SSL properties
+security.protocol=SSL
+ssl.certificate.location=/home/opc/kafka/leaf.cert
+ssl.key.location=/home/opc/kafka/leaf.key
+ssl.keystore.password=password
+ssl.keystore.location=/home/opc/kafka/kafka-keystore.p12
+
+#SASL_SSL properties
+security.protocol=SASL_SSL
+sasl.mechanism=SCRAM-SHA-512
+ssl.truststore.location=/home/opc/kafka/truststore.jks
+ssl.truststore.password=password
+sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="superUserName" password="password";
+
+#Certificado para configurar truststore.jks
+https://cacerts.digicert.com/DigiCertGlobalRootG2.crt.pem?_gl=1*1c1f9jy*_gcl_au*MTk2Mjc0ODc1LjE3NDA2ODAzNTM.
