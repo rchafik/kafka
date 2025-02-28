@@ -66,4 +66,5 @@ keytool -keystore truststore.jks -storepass password -alias oracle -import -file
 - [x] Produtor e Consumidor Streming
 - [x] Produtor e Consumidor SASL-SCRAM
 - [x] Produtor e Consumidor mTLS
+- [ ] Remover conteúdo sensível, usando arquivo de propriedades
 - [ ] Rever boas práticas, como armazenar os artefatos de segurança em vault ou bucket
