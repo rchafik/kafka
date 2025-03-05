@@ -68,3 +68,8 @@ keytool -keystore truststore.jks -storepass password -alias oracle -import -file
 - [x] Produtor e Consumidor mTLS
 - [ ] Remover conteúdo sensível, usando arquivo de propriedades
 - [ ] Rever boas práticas, como armazenar os artefatos de segurança em vault ou bucket
+- [ ] Entender o que pode ser feito com o super user do Kafka
+- [ ] Plugar uma interface gráfica para administrar o ambiente
+- [ ] Testes com Mirror Maker
+
+
