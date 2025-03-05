@@ -43,6 +43,16 @@ openssl x509 -req -in leaf.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial 
 
 openssl pkcs12 -export -in leaf.crt -inkey leaf.key -out kafka-keystore.p12 -name kafka-key
 
+**Certificado para configurar truststore.jks**
+
+https://cacerts.digicert.com/DigiCertGlobalRootG2.crt.pem?_gl=1*1c1f9jy*_gcl_au*MTk2Mjc0ODc1LjE3NDA2ODAzNTM.
+
+**Geração da truststore.jks**
+
+```
+keytool -keystore truststore.jks -storepass password -alias oracle -import -file arquivo.pem
+```
+
 **SSL properties**
 
 ```
@@ -91,16 +101,31 @@ sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule require
 ```
 kafka-broker-api-versions.sh --bootstrap-server bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 --command-config kafkasasl.properties
 ```
-
-**Certificado para configurar truststore.jks**
-
-https://cacerts.digicert.com/DigiCertGlobalRootG2.crt.pem?_gl=1*1c1f9jy*_gcl_au*MTk2Mjc0ODc1LjE3NDA2ODAzNTM.
-
-**Geração da truststore.jks**
+**Usando Super User para criar novo usuário**
+```
+kafka-configs.sh --bootstrap-server bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+  --alter --add-config "SCRAM-SHA-512=[password=ateam2025]" \
+  --entity-type users --entity-name ateamUser \
+  --command-config kafkasasl.properties
+  
+kafka-acls.sh --bootstrap-server bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+  --add --allow-principal User:ateamUser \
+  --operation Read --operation Write --operation Describe \
+  --topic ateam-topic \
+  --command-config kafkasasl.properties
+  
+kafka-acls.sh --bootstrap-server bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+  --add --allow-principal User:ateamUser \
+  --operation Read --operation Describe --group group-0 \
+  --command-config kafkasasl.properties
 
 ```
-keytool -keystore truststore.jks -storepass password -alias oracle -import -file arquivo.pem
-```
+## Related Links
+- [Manage Access Control Lists (ACLs) for Authorization in Confluent Platform](https://docs.confluent.io/platform/current/security/authorization/acls/manage-acls.html)
+
+- [Authorization and ACLs - Kafka](https://kafka.apache.org/documentation/#security_authz)
+
+- [User authentication and authorization in Apache Kafka](https://developer.ibm.com/tutorials/kafka-authn-authz/)
 
 # Tasks
 - [x] Produtor e Consumidor Streming
@@ -108,7 +133,7 @@ keytool -keystore truststore.jks -storepass password -alias oracle -import -file
 - [x] Produtor e Consumidor mTLS
 - [ ] Remover conteúdo sensível, usando arquivo de propriedades
 - [ ] Rever boas práticas, como armazenar os artefatos de segurança em vault ou bucket
-- [ ] Entender o que pode ser feito com o super user do Kafka
+- [x] Entender o que pode ser feito com o super user do Kafka
 - [ ] Plugar uma interface gráfica para administrar o ambiente
 - [ ] Testes com Mirror Maker
 
