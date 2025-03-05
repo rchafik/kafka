@@ -20,37 +20,42 @@ Allow service rawfka to use secrets in compartment <compartment> where request.o
 # Preparing all itens for Kafka setup
 
 **generate a CA key**
-
+```
 openssl genpkey -algorithm RSA -out rootCA.key -aes256 -pass pass:yourpassword -pkeyopt rsa_keygen_bits:4096
+```
 
 **generate CA self signed cert:**
-
+```
 openssl req -x509 -new -nodes -key rootCA.key -sha256 -days 3650 -out rootCA.pem -passin pass:yourpassword
+```
 
 **create leaf cert private key and csr(cert signed request):**
-
+```
 openssl genpkey -algorithm RSA -out leaf.key -pkeyopt rsa_keygen_bits:2048
+```
 
 **create leaf cert csr:**
-
+```
 openssl req -new -key leaf.key -out leaf.csr
+```
 
 **use root CA to sign leaf cert:**
-
+```
 openssl x509 -req -in leaf.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out leaf.crt -days 825 -sha256 -passin pass:yourpassword
+```
 
 **Create kafka-keystore.p12 file, run the command below**
-
+```
 openssl pkcs12 -export -in leaf.crt -inkey leaf.key -out kafka-keystore.p12 -name kafka-key
+```
 
 **Certificado para configurar truststore.jks**
 
-https://cacerts.digicert.com/DigiCertGlobalRootG2.crt.pem?_gl=1*1c1f9jy*_gcl_au*MTk2Mjc0ODc1LjE3NDA2ODAzNTM.
+[Certificado Digicert para o jks](https://cacerts.digicert.com/DigiCertGlobalRootG2.crt.pem?_gl=1*1c1f9jy*_gcl_au*MTk2Mjc0ODc1LjE3NDA2ODAzNTM.)
 
 **Geração da truststore.jks**
-
 ```
-keytool -keystore truststore.jks -storepass password -alias oracle -import -file arquivo.pem
+keytool -keystore truststore.jks -storepass password -alias oracle -import -file DigiCertGlobalRootG2.crt.pem
 ```
 
 **SSL properties**
