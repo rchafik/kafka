@@ -125,12 +125,28 @@ kafka-acls.sh --bootstrap-server bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopa
   --command-config kafkasasl.properties
 
 ```
-## Related Links
+**Links sobre ACLs**
 - [Manage Access Control Lists (ACLs) for Authorization in Confluent Platform](https://docs.confluent.io/platform/current/security/authorization/acls/manage-acls.html)
 
 - [Authorization and ACLs - Kafka](https://kafka.apache.org/documentation/#security_authz)
 
 - [User authentication and authorization in Apache Kafka](https://developer.ibm.com/tutorials/kafka-authn-authz/)
+
+**Testes com Interface Gráfica com o Kafka**
+
+Utilizamos o [kafka-ui](https://github.com/provectus/kafka-ui)
+
+Rodamos o comando abaixo na VM:
+```
+docker run -it -p 8080:8080 -e DYNAMIC_CONFIG_ENABLED=true provectuslabs/kafka-ui
+```
+
+Depois esse comando para criar um túnel e possibilitar a comunicação usando o navegador local
+```
+ssh opc@ipVM -i /pathChavePrivada/ssh-key.key -A -L 8080:localhost:8080
+```
+
+Existe outra opção de UI, a [akhq.io](https://akhq.io/), que não testamos porque seu arquivo de configuração era bem complexo.
 
 # Tasks
 - [x] Produtor e Consumidor Streming
@@ -139,7 +155,7 @@ kafka-acls.sh --bootstrap-server bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopa
 - [ ] Remover conteúdo sensível, usando arquivo de propriedades
 - [ ] Rever boas práticas, como armazenar os artefatos de segurança em vault ou bucket
 - [x] Entender o que pode ser feito com o super user do Kafka
-- [ ] Plugar uma interface gráfica para administrar o ambiente
+- [x] Plugar uma interface gráfica para administrar o ambiente
 - [ ] Testes com Mirror Maker
 
 
