@@ -3,7 +3,6 @@
 
 # Kafka
 
-
 **Policy on behalf of Customer to Rawfka( MUST )**
 ```
 Allow service rawfka to use vnics in compartment <compartment>
@@ -17,7 +16,69 @@ Allow service rawfka to {SECRET_UPDATE } in compartment <compartment>
 Allow service rawfka to use secrets in compartment <compartment> where request.operation = 'UpdateSecret'
 ```
 
-# Preparing all itens for Kafka setup
+**Criar o arquivo kafka.json com o seguinte conteúdo, para ser utilizado na criação da configuração do cluster kafka**
+```
+{
+    "properties": {
+        "num.network.threads": 3,
+        "num.io.threads": 8,
+        "socket.send.buffer.bytes": 102400,
+        "socket.receive.buffer.bytes": 102400,
+        "socket.request.max.bytes": 104857600,
+        "log.retention.hours": 168,
+        "log.segment.bytes": 1073741824,
+        "log.retention.check.interval.ms": 300000,
+        "num.partitions": 1,
+        "default.replication.factor": 1,
+        "min.insync.replicas": 1,
+        "message.max.bytes": 1000012,
+        "replica.fetch.max.bytes": 1048576,
+        "offsets.topic.replication.factor": 1,
+        "transaction.state.log.replication.factor": 1,
+        "transaction.state.log.min.isr": 2
+    }
+}
+```
+
+**Comando para criar o cluster config, baseado no arquivo gerado anteriormente**
+```
+oci kafka cluster-config create \
+-c ocid1.compartment.oc1.xxx \
+--latest-config file://kafka.json \
+--region sa-vinhedo-1
+```
+
+**Criar o cluster kafka**
+
+>>Importante lembrar que subnet utilizada deverá ser privada
+
+```
+oci kafka cluster create \
+--access-subnets '[{"subnets": ["ocid1.subnet.oc1.sa-vinhedo-1.xxx"]}]' \
+--cluster-config-id ocid1.kafkaclusterconfig.oc1.sa-vinhedo-1.xxx \
+--cluster-config-version 1 \
+--cluster-type PRODUCTION \
+--coordination-type ZOOKEEPER \
+--broker-shape '{"nodeCount": 3, "ocpuCount": 4, "storageSizeInGbs": 100 }' \
+--kafka-version 3.7.0 \
+--compartment-id ocid1.compartment.oc1..xxx \
+--region sa-vinhedo-1
+```
+
+**Habilitar o Super User para utilizar com SASL_SSL**
+>>Primeiro deverá ser criado um vault e um secret e copiar o ocid do secret, para executar o comando
+
+```
+oci kafka cluster enable-superuser \
+--kafka-cluster-id ocid1.kafkacluster.oc1.sa-vinhedo-1.xxx \
+--compartment-id ocid1.compartment.oc1..xxx \
+--secret-id ocid1.vaultsecret.oc1.sa-vinhedo-1.xxx \
+--region sa-vinhedo-1
+```
+
+>>Após finalizar a execução, dentro do secret estará o usuário e senha do super user.
+
+# Preparando os itens que serão necessário para acessar e configurar o kafka cluster após sua criação
 
 **generate a CA key**
 ```
@@ -58,6 +119,14 @@ openssl pkcs12 -export -in leaf.crt -inkey leaf.key -out kafka-keystore.p12 -nam
 keytool -keystore truststore.jks -storepass password -alias oracle -import -file DigiCertGlobalRootG2.crt.pem
 ```
 
+**Comando para atualizar o mTLS do kafka cluster com o conteúdo do arquivo rootCA.pem**
+```
+oci kafka cluster update \
+--client-certificate-bundle "colar todo o conteúdo do arquivo rootCA.pem" \
+--kafka-cluster-id ocid1.kafkacluster.oc1.sa-vinhedo-1.xxx \
+--region sa-vinhedo-1
+```
+
 **SSL properties**
 
 ```
@@ -83,12 +152,6 @@ kafka-console-producer.sh \
 kafka-console-consumer.sh \
 --bootstrap-server bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
  --topic ateam-topic --from-beginning --consumer.config /home/opc/kafka/kafkaclient.properties
-```
-
-**Habilitando o super user para ser utilizado com SASL_SSL**
-
-```
-oci kafka cluster enable-superuser --kafka-cluster-id ocid1.kafkacluster.oc1. --compartment-id ocid1.compartment.oc1. --secret-id ocid1.vaultsecret.oc1.
 ```
 
 **SASL_SSL properties**
