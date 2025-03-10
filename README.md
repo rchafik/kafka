@@ -1,6 +1,3 @@
-# Streaming
-
-
 # Kafka
 
 **Policy on behalf of Customer to Rawfka( MUST )**
@@ -210,6 +207,33 @@ ssh opc@ipVM -i /pathChavePrivada/ssh-key.key -A -L 8080:localhost:8080
 ```
 
 Existe outra opção de UI, a [akhq.io](https://akhq.io/), que não testamos porque seu arquivo de configuração era bem complexo.
+
+## Testes com Mirror Maker 2.0
+>Replicação de mensagens entre diferentes regiões OCI
+
+**Setup de Network**
+
+Antes de iniciar, precisamos preparar a conectividade entre as regiões, conforme previsto na imagem:
+
+![arquitetura](images/KafkaMirrorMakerSetup.png "arquitetura")
+
+  - Definir quais regiões estarão envolvidas na arquitetura e definir os CIDR das Subnets, para que não haja Overlap de IP´s;
+  - Definir a região Primária e a região de Stand-By;
+  - >**Importante**: o Mirror Maker será executado na região Stand-By;
+  - Neste exemplo, vamos utilizar GRU como primária (Source) e VCP como Stand-By (Target)
+  - Na console OCI, primeiro cria-se o DRG (Dynamic routing gateway) em ambas as regiões, e associa cada um como attchment nas VCN´s que estão os recursos;
+  - Agora precisamos criar *Remote peering connection attachments* para cada DRG e novamente em ambas as regiões;
+  - Agora na região Stand-By, clique no *Remote peering connection attachments* criado, para abrir uma tela para estabeler a conexão com a região primária;
+  - Nesta tela (ainda na região Stand-By), você precisará escolher a região primária e informar o OCID do Remote peering connect attachment, também da região primária e clicar em estabelecer a conexão. Esse procedimento demora alguns minutos, para será realizada em ambas as regiões.
+  - Em ambas as regiões, deve-se configurar o route table com o DRG;
+  - Na região Primária, deve-se configurar a security list, permitindo o CIDR da subnet da região Stand-By.
+
+
+Referências:
+
+- [Oracle Cloud Infrastructure (OCI) Remote Peering - how to peer two subnets in two separate regions](https://www.youtube.com/watch?v=mgYieeS10dI)
+
+
 
 # Tasks
 - [x] Produtor e Consumidor Streming
