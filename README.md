@@ -134,6 +134,19 @@ ssl.keystore.password=password
 ssl.keystore.location=/home/opc/kafka/kafka-keystore.p12
 ```
 
+**Instalando o Kafka nas VM´s**
+```
+ cd ~
+ mkdir kafka
+ cd kafka
+ wget https://dlcdn.apache.org/kafka/3.7.2/kafka_2.13-3.7.2.tgz
+ tar -xzf kafka_2.13-3.7.2.tgz
+ rm -rf kafka_2.13-3.7.2.tgz
+ cd ~
+ # altere o arquivo [.basrch] adicionando a linha abaixo, para colocar o kafka no path da sua VM
+ export PATH=/home/opc/kafka/kafka_2.13-3.7.2/bin:$PATH
+```
+
 **Comandos kafka com SSL**
 ```
 kafka-topics.sh --create \
@@ -227,12 +240,73 @@ Antes de iniciar, precisamos preparar a conectividade entre as regiões, conform
   - Nesta tela (ainda na região Stand-By), você precisará escolher a região primária e informar o OCID do Remote peering connect attachment, também da região primária e clicar em estabelecer a conexão. Esse procedimento demora alguns minutos, para será realizada em ambas as regiões.
   - Em ambas as regiões, deve-se configurar o route table com o DRG;
   - Na região Primária, deve-se configurar a security list, permitindo o CIDR da subnet da região Stand-By.
-
+  - **Atenção:** coloquei no arquivos hosts, o endereço do ambiente kafka de origem, porque ainda não conseguimos fazer funcionar a resolução automática de DNS entre regiões OCI
 
 Referências:
 
 - [Oracle Cloud Infrastructure (OCI) Remote Peering - how to peer two subnets in two separate regions](https://www.youtube.com/watch?v=mgYieeS10dI)
 
+- [OCI Private DNS - Common Scenarios](https://www.ateam-oracle.com/post/oci-private-dns---common-scenarios)
+
+**Usando o Mirror Maker**
+
+Arquivo de configuração - mirror-maker.properties:
+
+```
+# specify any number of cluster aliases
+clusters = source, destination
+
+# connection information for each cluster
+# This is a comma separated host:port pairs for each cluster
+# for example. "A_host1:9092, A_host2:9092, A_host3:9092"  and you can see the exact host name on Ambari > Hosts
+source.bootstrap.servers = bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092
+destination.bootstrap.servers = bootstrap-clstr-przl6vo6drynch0h.kafka.sa-vinhedo-1.oci.oraclecloud.com:9092
+
+# enable and configure individual replication flows
+source->destination.enabled = true
+
+#security setup
+source.security.protocol=SASL_SSL
+source.sasl.mechanism=SCRAM-SHA-512
+source.ssl.truststore.location=/home/opc/kafka/truststore.jks
+source.ssl.truststore.password=ateam
+source.sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="super-user" password="senha";
+
+destination.security.protocol=SASL_SSL
+destination.sasl.mechanism=SCRAM-SHA-512
+destination.ssl.truststore.location=/home/opc/kafka/truststore.jks
+destination.ssl.truststore.password=ateam
+destination.sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="super-user" password="senha";
+
+# regex which defines which topics gets replicated. For eg "foo-.*"
+source->destination.topics = ateam-topic
+groups=.*
+topics.blacklist="*.internal,__.*"
+
+# Setting replication factor of newly created remote topics
+replication.factor=3
+
+replication.policy.class=org.apache.kafka.connect.mirror.IdentityReplicationPolicy
+
+checkpoints.topic.replication.factor=1
+heartbeats.topic.replication.factor=1
+offset-syncs.topic.replication.factor=1
+
+offset.storage.replication.factor=1
+status.storage.replication.factor=1
+config.storage.replication.factor=1
+```
+
+Comando para executar o Mirror:
+>Esse arquivo já está na instalação do kafka quando o mesmo foi baixado e instalado na VM
+
+```
+connect-mirror-maker.sh mirror-maker.properties
+```
+
+Referências:
+
+- [Como usar o Kafka MirrorMaker 2.0 na migração e replicação de dados e nos casos de uso](https://learn.microsoft.com/pt-br/azure/hdinsight/kafka/kafka-mirrormaker-2-0-guide)
 
 
 # Tasks
@@ -243,6 +317,6 @@ Referências:
 - [ ] Rever boas práticas, como armazenar os artefatos de segurança em vault ou bucket
 - [x] Entender o que pode ser feito com o super user do Kafka
 - [x] Plugar uma interface gráfica para administrar o ambiente
-- [ ] Testes com Mirror Maker
+- [x] Testes com Mirror Maker
 
 
