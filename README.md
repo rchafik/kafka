@@ -230,17 +230,25 @@ Antes de iniciar, precisamos preparar a conectividade entre as regiões, conform
 
 ![arquitetura](images/00_KafkaMirrorMakerSetup.png "arquitetura")
 
-  - Definir quais regiões estarão envolvidas na arquitetura e definir os CIDR das Subnets, para que não haja Overlap de IP´s;
+  - Definir quais regiões estarão envolvidas na arquitetura e definir os CIDR das VCN´s, para que não haja Overlap de IP´s;
   - Definir a região Primária e a região de Stand-By;
   - >**Importante**: o Mirror Maker será executado na região *Stand-By*;
   - Neste exemplo, vamos utilizar GRU como primária (Source) e VCP como Stand-By (Target)
   - Na console OCI, primeiro cria-se o DRG (Dynamic routing gateway) em ambas as regiões, e associa cada um como attchment nas VCN´s que estão os recursos;
   - Agora precisamos criar *Remote peering connection attachments* para cada DRG e novamente em ambas as regiões;
   - Agora na região Stand-By, clique no *Remote peering connection attachments* criado, para abrir uma tela para estabeler a conexão com a região primária;
-  - Nesta tela (ainda na região Stand-By), você precisará escolher a região primária e informar o OCID do Remote peering connect attachment, também da região primária e clicar em estabelecer a conexão. Esse procedimento demora alguns minutos, para será realizada em ambas as regiões.
+  - Nesta tela (ainda na região Stand-By), você precisará escolher a região primária e informar o OCID do Remote peering connect attachment  também da região primária, e clicar em estabelecer a conexão. Esse procedimento demora alguns minutos e será aplicado nas duas regiões envolvidas.
   - Em ambas as regiões, deve-se :
     - configurar o route table das subnets com o DRG usando CIDR da VCN da outra região;
     - configurar regras de Security List usando o CIDR da VCN da outra região;
+
+**Algumas imagens para ilustrar as configurações realizadas:**
+
+Networking >> Virtual cloud networks >> Sua VCN >> Clica no link do DNS Resolver >> Private resolver details:
+
+- ![endpoints GRU](images/01_endpointsGRU.png "endpoints GRU")
+- ![rule GRU](images/02_ruleGRU.png "rule GRU")
+
 
 Referências:
 
