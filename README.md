@@ -245,9 +245,14 @@ Antes de iniciar, precisamos preparar a conectividade entre as regiões, conform
 **Algumas imagens para ilustrar as configurações realizadas:**
 
 Networking >> Virtual cloud networks >> Sua VCN >> Clica no link do DNS Resolver >> Private resolver details:
-
+>GRU
 - ![endpoints GRU](images/01_endpointsGRU.png "endpoints GRU")
 - ![rule GRU](images/02_ruleGRU.png "rule GRU")
+
+>VCP
+- ![endpoints VCP](images/03_endpointsVCP.png "endpoints VCP")
+- ![rule VCP](images/04_ruleVCP.png "rule VCP")
+
 
 
 Referências:
