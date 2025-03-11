@@ -337,10 +337,10 @@ Referências:
 
 ## Acknowledgments
 
-* **Author** 
+**Author** 
 - Rodrigo Chafik Choueiri (Oracle LAD A-Team Solution Engineer)  
 
-* **Contributors** 
+**Contributors** 
 - Joao Tarla (Oracle LAD A-Team Solution Engineer)
 - Sillas Lima (Oracle LAD Solution Architect) 
 - Luciana Oliveira (Oracle LAD A-Team Networking Specialist)
