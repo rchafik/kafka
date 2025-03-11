@@ -246,23 +246,37 @@ Antes de iniciar, precisamos preparar a conectividade entre as regiões, conform
 
 **Algumas imagens para ilustrar as configurações realizadas em Networking:**
 
-Networking >> Virtual cloud networks >> Sua VCN >> Clica no link do DNS Resolver >> Private resolver details:
+Networking >> Virtual cloud networks >> Sua VCN >> Clique no link do DNS Resolver >> Private resolver details:
+
 >GRU
+
   ![endpoints GRU](images/01_endpointsGRU.png "endpoints GRU")
   ![rule GRU](images/02_ruleGRU.png "rule GRU")
 
 >VCP
+
   ![endpoints VCP](images/03_endpointsVCP.png "endpoints VCP")
   ![rule VCP](images/04_ruleVCP.png "rule VCP")
 
-Alterar as route tables utilizadas nas subnets para permitir o acesso via DRG para a outra região (usamos o CIDR da VCN da outra região):
+Configurar as route tables utilizadas nas subnets para permitir o acesso via DRG para a outra região (usamos o CIDR da VCN da outra região):
 
 >GRU
+
   ![route table GRU](images/05_routeTableGRU.png "route table GRU")
 
 >VCP
+
   ![route table VCP](images/06_routeTableVCP.png "route table VCP")
 
+Configurar as Security List em Ingress Rules das subnets, para liberar a conectividade entre as regiões (usamos o CIDR da VCN da outra região):
+
+>GRU
+
+  ![security list GRU](images/07_securityListGRU.png "security list GRU")
+
+>VCP
+
+  ![security list VCP](images/08_securityListVCP.png "security list VCP")
 
 Referências:
 
