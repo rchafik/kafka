@@ -242,7 +242,7 @@ Antes de iniciar, precisamos preparar a conectividade entre as regiões, conform
     - configurar o route table das subnets com o DRG usando CIDR da VCN da outra região;
     - configurar regras de Security List usando o CIDR da VCN da outra região;
 
-**Algumas imagens para ilustrar as configurações realizadas:**
+**Algumas imagens para ilustrar as configurações realizadas em Networking:**
 
 Networking >> Virtual cloud networks >> Sua VCN >> Clica no link do DNS Resolver >> Private resolver details:
 >GRU
