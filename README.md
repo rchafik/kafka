@@ -1,5 +1,7 @@
 # Kafka
 
+![managed kafka](images/00_AboutManaged%20Kafka.png "managed kafka")
+
 **Policy on behalf of Customer to Rawfka( MUST )**
 ```
 Allow service rawfka to use vnics in compartment <compartment>
