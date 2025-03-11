@@ -228,7 +228,7 @@ Existe outra opção de UI, a [akhq.io](https://akhq.io/), que não testamos por
 
 Antes de iniciar, precisamos preparar a conectividade entre as regiões, conforme previsto na imagem:
 
-![arquitetura](images/KafkaMirrorMakerSetup.png "arquitetura")
+![arquitetura](images/00_KafkaMirrorMakerSetup.png "arquitetura")
 
   - Definir quais regiões estarão envolvidas na arquitetura e definir os CIDR das Subnets, para que não haja Overlap de IP´s;
   - Definir a região Primária e a região de Stand-By;
@@ -238,9 +238,9 @@ Antes de iniciar, precisamos preparar a conectividade entre as regiões, conform
   - Agora precisamos criar *Remote peering connection attachments* para cada DRG e novamente em ambas as regiões;
   - Agora na região Stand-By, clique no *Remote peering connection attachments* criado, para abrir uma tela para estabeler a conexão com a região primária;
   - Nesta tela (ainda na região Stand-By), você precisará escolher a região primária e informar o OCID do Remote peering connect attachment, também da região primária e clicar em estabelecer a conexão. Esse procedimento demora alguns minutos, para será realizada em ambas as regiões.
-  - Em ambas as regiões, deve-se configurar o route table com o DRG;
-  - Na região Primária, deve-se configurar a security list, permitindo o CIDR da subnet da região Stand-By.
-  - **Atenção:** coloquei no arquivos hosts, o endereço do ambiente kafka de origem, porque ainda não conseguimos fazer funcionar a resolução automática de DNS entre regiões OCI
+  - Em ambas as regiões, deve-se :
+    - configurar o route table das subnets com o DRG usando CIDR da VCN da outra região;
+    - configurar regras de Security List usando o CIDR da VCN da outra região;
 
 Referências:
 
@@ -320,3 +320,7 @@ Referências:
 - [x] Testes com Mirror Maker
 
 
+## Acknowledgments
+
+* **Author** - Rodrigo Chafik Choueiri (Oracle LAD A-Team Solution Engineer)  
+* **Contributors** - Joao Tarla (Oracle LAD A-Team Solution Engineer), Sillas Lima (Oracle LAD Solution Architect) and Luciana Oliveira (Oracle LAD A-Team Networking Specialist)
