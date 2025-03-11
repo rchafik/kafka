@@ -346,7 +346,7 @@ Referências:
 
 
 # Tasks
-- [x] Produtor e Consumidor Streming
+- [x] Produtor e Consumidor Streaming
 - [x] Produtor e Consumidor SASL-SCRAM
 - [x] Produtor e Consumidor mTLS
 - [ ] Remover conteúdo sensível, usando arquivo de propriedades
@@ -354,6 +354,7 @@ Referências:
 - [x] Entender o que pode ser feito com o super user do Kafka
 - [x] Plugar uma interface gráfica para administrar o ambiente
 - [x] Testes com Mirror Maker
+- [ ] Schema Registry
 
 
 ## Acknowledgments
