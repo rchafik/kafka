@@ -372,7 +372,7 @@ Referências sobre o Apicurio:
 - [x] Entender o que pode ser feito com o super user do Kafka
 - [x] Plugar uma interface gráfica para administrar o ambiente
 - [x] Testes com Mirror Maker
-- [ ] Schema Registry
+- [x] Schema Registry ainda não nativo, mas podemos utilizar um open source (neste caso, usamos o Apicurio). Schema Registry gerenciado está no roadmap para FY27.
 
 
 ## Acknowledgments
@@ -385,3 +385,4 @@ Referências sobre o Apicurio:
 - Sillas Lima (Oracle LAD Solution Architect) 
 - Luciana Oliveira (Oracle LAD A-Team Networking Specialist)
 - John Moore (Consulting Member of Technical Staff)
+- Abhishek Bhaumik (Product Manager)
