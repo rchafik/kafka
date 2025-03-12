@@ -164,6 +164,10 @@ kafka-console-producer.sh \
 kafka-console-consumer.sh \
 --bootstrap-server bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
  --topic ateam-topic --from-beginning --consumer.config /home/opc/kafka/kafkaclient.properties
+
+kafka-topics.sh --list \
+  --bootstrap-server bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
+  --command-config /home/opc/kafka/kafkaclient.properties
 ```
 
 **SASL_SSL properties**
@@ -344,6 +348,20 @@ Referências:
 
 - [Como usar o Kafka MirrorMaker 2.0 na migração e replicação de dados e nos casos de uso](https://learn.microsoft.com/pt-br/azure/hdinsight/kafka/kafka-mirrormaker-2-0-guide)
 
+
+**Testes com Schema Registry**
+
+Estamos usando o [Apicurio Registry](https://www.apicur.io/registry/)
+
+Depois de instalar na VM, foi necessário criar um túnel para as portas do backend e frontend, para conseguir executar localmente a ui:
+
+```
+ssh opc@ipSuaVm -i /pathChavePrivda/ssh-key-2024-11-01.key -A -L :8888:localhost:8888 8080:localhost:8080
+```
+
+Referências sobre o Apicurio:
+
+- [Exemplos de código](https://github.com/Apicurio/apicurio-registry/blob/main/examples/simple-avro)
 
 # Tasks
 - [x] Produtor e Consumidor Streaming
