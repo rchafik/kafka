@@ -6,8 +6,10 @@ import java.util.Properties;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 
-import io.confluent.kafka.serializers.KafkaAvroDeserializer;
+import io.apicurio.registry.serde.avro.AvroKafkaDeserializer;
+import io.apicurio.registry.serde.config.SerdeConfig;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 
 public class ConsumerKafkaSASL_Avro {
@@ -27,11 +29,12 @@ public class ConsumerKafkaSASL_Avro {
       props.put("enable.auto.commit", "true");
       props.put("auto.commit.interval.ms", "1000");
       props.put("session.timeout.ms", "30000");
-      props.put("key.deserializer", KafkaAvroDeserializer.class.getName());
-      props.put("value.deserializer", KafkaAvroDeserializer.class.getName());
-      props.put("schema.registry.url", "http://localhost:8081");
+      props.put("key.deserializer", StringDeserializer.class.getName());
+      props.put("value.deserializer", AvroKafkaDeserializer.class.getName());
+      
+      String registryUrl = "http://localhost:8080/apis/registry/v3";
+      props.put(SerdeConfig.REGISTRY_URL, registryUrl);
       props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, "true");
-
 
       KafkaConsumer<String, User> consumer = new KafkaConsumer<String, User>(props);
 
