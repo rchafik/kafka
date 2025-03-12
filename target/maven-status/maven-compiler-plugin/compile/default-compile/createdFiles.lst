@@ -1,1 +1,9 @@
-com/oracle/App.class
+com/oracle/User$Builder.class
+com/oracle/ConsumerStreaming.class
+com/oracle/ConsumerKafkaMTLS.class
+com/oracle/ProducerKafkaSASL_SSL.class
+com/oracle/ProducerStreaming.class
+com/oracle/ConsumerKafkaSASL_SSL.class
+com/oracle/ConsumerKafkaSASL_SSL_ACL.class
+com/oracle/ProducerKafkaMTLS.class
+com/oracle/User.class

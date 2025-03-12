@@ -7,11 +7,14 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 
-public class ConsumerKafkaSASL_SSL_test{
+import io.confluent.kafka.serializers.KafkaAvroDeserializer;
+import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
+
+public class ConsumerKafkaSASL_Avro {
 
    public static void main(String[] args) throws Exception {
        
-      String topic = "ateam-topic";
+      String topic = "users";
 
       Properties props = new Properties();
       props.put("bootstrap.servers", "bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092");
@@ -19,25 +22,25 @@ public class ConsumerKafkaSASL_SSL_test{
       props.put("sasl.mechanism", "SCRAM-SHA-512");
       props.put("ssl.truststore.location", "/home/opc/kafka/truststore.jks");
       props.put("ssl.truststore.password", "ateam");
-      props.put("sasl.jaas.config", "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"ateamUser\" password=\"ateam2025\";");
+      props.put("sasl.jaas.config", "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"super-user-btaxq3z9d0ziwk0g\" password=\"719e35e5-017c-4cce-bb58-d8ed4f71201e\";");
       props.put("group.id", "group-0");
       props.put("enable.auto.commit", "true");
       props.put("auto.commit.interval.ms", "1000");
       props.put("session.timeout.ms", "30000");
-      props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-      props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+      props.put("key.deserializer", KafkaAvroDeserializer.class.getName());
+      props.put("value.deserializer", KafkaAvroDeserializer.class.getName());
+      props.put("schema.registry.url", "http://localhost:8081");
+      props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, "true");
 
 
-
-      KafkaConsumer<String, String> consumer = new KafkaConsumer<String, String>(props);
+      KafkaConsumer<String, User> consumer = new KafkaConsumer<String, User>(props);
 
       consumer.subscribe(Arrays.asList(topic));
       System.out.println("Subscribed to topic " + topic);
-      int i = 0;
 
       while (true) {
-         ConsumerRecords<String, String> records = consumer.poll(100);
-            for (ConsumerRecord<String, String> record : records)
+         ConsumerRecords<String, User> records = consumer.poll(100);
+            for (ConsumerRecord<String, User> record : records)
                System.out.printf("offset = %d, key = %s, value = %s\n", 
                record.offset(), record.key(), record.value());
       }     
