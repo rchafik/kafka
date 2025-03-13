@@ -245,7 +245,7 @@ Antes de iniciar, precisamos preparar a conectividade entre as regiões, conform
 
   - Definir quais regiões estarão envolvidas na arquitetura e definir os CIDR das VCN´s, para que não haja Overlap de IP´s;
   - Definir a região Primária e a região de Stand-By;
-  - >**Importante**: o Mirror Maker será executado na região *Stand-By*;
+    >**Importante**: o Mirror Maker será executado na região *Stand-By*;
   - Neste exemplo, vamos utilizar GRU como primária (Source) e VCP como Stand-By (Target)
   - Na console OCI, primeiro cria-se o DRG (Dynamic routing gateway) em ambas as regiões, e associa cada um como attchment nas VCN´s que estão os recursos;
   - Agora precisamos criar *Remote peering connection attachments* para cada DRG e novamente em ambas as regiões;
