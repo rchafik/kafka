@@ -492,7 +492,7 @@ Ao executar a classe para produzir a mensagem, podemos observar o artefato criad
 
   ![schema registry](images/09_apicurioUI.png "schema registry")
 
-Ao artefato criado, ir na aba Versions e clicar na versão existente, conseguimos verificar o conteúdo do arquivo Avro criado no Schema Registry:
+Acessar o artefato criado, aba Versions e clicar na versão existente, conseguimos verificar o conteúdo do arquivo Avro criado no Schema Registry:
 
   ![avro artifact](images/10_schemaRegistryAvroDetail.png "avro artifact")
 
