@@ -65,7 +65,8 @@ oci kafka cluster create \
 ```
 
 **Habilitar o Super User para utilizar com SASL_SSL**
->>Primeiro deverá ser criado um vault e um secret e copiar o ocid do secret, para executar o comando
+
+  >Primeiro deverá ser criado um vault e um secret e copiar o ocid do secret, para executar o comando
 
 ```
 oci kafka cluster enable-superuser \
@@ -75,7 +76,7 @@ oci kafka cluster enable-superuser \
 --region sa-vinhedo-1
 ```
 
->>Após finalizar a execução, dentro do secret estará o usuário e senha do super user.
+  >Após finalizar a execução, dentro do secret estará o usuário e senha do super user.
 
 # Preparando os itens que serão necessário para acessar e configurar o kafka cluster após sua criação
 
@@ -433,6 +434,13 @@ Para gerar a classe Java através do arquivo Avro, executar a linha de comando:
   ```
   mvn org.apache.avro:avro-maven-plugin:schema
   ```
+
+Criamos as classes abaixo para trabalharmos com Avro e conectar no Schema Registry Apicurio:
+  - ProducerKafkaSASL_Avro.java
+  - ConsumerKafkaSASL_Avro.java
+
+Pontos em comum, para observarmos:
+
 
 
 Referências sobre o Apicurio:
