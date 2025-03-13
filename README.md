@@ -1,6 +1,6 @@
 # Kafka
 
-![managed kafka](images/00_AboutManaged%20Kafka.png "managed kafka")
+![managed kafka](images/00_ManagedKafka.png "managed kafka")
 
 **Policy on behalf of Customer to Rawfka( MUST )**
 ```
