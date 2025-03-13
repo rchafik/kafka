@@ -1,5 +1,6 @@
 package com.oracle;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -42,7 +43,7 @@ public class ConsumerKafkaSASL_Avro {
       System.out.println("Subscribed to topic " + topic);
 
       while (true) {
-         ConsumerRecords<String, User> records = consumer.poll(100);
+         ConsumerRecords<String, User> records = consumer.poll(Duration.ofMillis(100));
             for (ConsumerRecord<String, User> record : records)
                System.out.printf("offset = %d, key = %s, value = %s\n", 
                record.offset(), record.key(), record.value());

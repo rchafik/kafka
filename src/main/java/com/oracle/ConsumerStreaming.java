@@ -1,5 +1,6 @@
 package com.oracle;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -34,7 +35,7 @@ public class ConsumerStreaming {
       int i = 0;
 
       while (true) {
-         ConsumerRecords<String, String> records = consumer.poll(100);
+         ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
             for (ConsumerRecord<String, String> record : records)
                System.out.printf("offset = %d, key = %s, value = %s\n", 
                record.offset(), record.key(), record.value());

@@ -49,7 +49,7 @@ oci kafka cluster-config create \
 
 **Criar o cluster kafka**
 
->>Importante lembrar que subnet utilizada deverá ser privada
+>Importante: a subnet para provisionar o cluster deverá ser **privada**
 
 ```
 oci kafka cluster create \
@@ -127,16 +127,6 @@ oci kafka cluster update \
 --region sa-vinhedo-1
 ```
 
-**SSL properties**
-
-```
-security.protocol=SSL
-ssl.certificate.location=/home/opc/kafka/leaf.cert
-ssl.key.location=/home/opc/kafka/leaf.key
-ssl.keystore.password=password
-ssl.keystore.location=/home/opc/kafka/kafka-keystore.p12
-```
-
 **Instalando o Kafka nas VM´s**
 ```
  cd ~
@@ -149,6 +139,20 @@ ssl.keystore.location=/home/opc/kafka/kafka-keystore.p12
  # altere o arquivo [.basrch] adicionando a linha abaixo, para colocar o kafka no path da sua VM
  export PATH=/home/opc/kafka/kafka_2.13-3.7.2/bin:$PATH
 ```
+
+
+**SSL properties**
+
+Arquivo kafkaclient.properties:
+
+```
+security.protocol=SSL
+ssl.certificate.location=/home/opc/kafka/leaf.cert
+ssl.key.location=/home/opc/kafka/leaf.key
+ssl.keystore.password=password
+ssl.keystore.location=/home/opc/kafka/kafka-keystore.p12
+```
+
 
 **Comandos kafka com SSL**
 ```
@@ -172,6 +176,8 @@ kafka-topics.sh --list \
 ```
 
 **SASL_SSL properties**
+
+Arquivo kafkasasl.properties:
 
 ```
 security.protocol=SASL_SSL
