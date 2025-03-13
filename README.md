@@ -356,8 +356,84 @@ Estamos usando o [Apicurio Registry](https://www.apicur.io/registry/)
 Depois de instalar na VM, foi necessário criar um túnel para as portas do backend e frontend, para conseguir executar localmente a ui:
 
 ```
-ssh opc@ipSuaVm -i /pathChavePrivda/ssh-key-2024-11-01.key -A -L :8888:localhost:8888 8080:localhost:8080
+ssh opc@ipSuaVm -i /pathChavePrivada/ssh-key-2024-11-01.key -A -L :8888:localhost:8888 8080:localhost:8080
 ```
+
+Criamos um arquivo Avro: user.avsc
+  ```
+  {
+    "type": "record",
+    "name": "User",
+    "namespace": "com.oracle",
+    "fields": [
+      {"name": "id", "type": "int"},
+      {"name": "name", "type": "string"},
+      {"name": "email", "type": "string"}
+    ]
+  }
+  ```
+Utilizamos o um plugin no maven (arquivo pom.xml) para gerar uma classe Java baseada neste arquivo Avro:
+
+  ```
+  <dependencies>   
+    <!-- Kafka Client -->
+    <dependency>
+        <groupId>org.apache.kafka</groupId>
+        <artifactId>kafka-clients</artifactId>
+        <version>3.9.0</version>
+    </dependency>
+
+    <!-- Avro -->
+    <dependency>
+        <groupId>org.apache.avro</groupId>
+        <artifactId>avro</artifactId>
+        <version>1.12.0</version>
+    </dependency>  
+
+    <!-- Kafka Avro Serializer -->
+    <dependency>
+        <groupId>io.confluent</groupId>
+        <artifactId>kafka-avro-serializer</artifactId>
+        <version>7.9.0</version>
+    </dependency>      
+
+    <!-- Apicurio -->
+    <dependency>
+      <groupId>io.apicurio</groupId>
+      <artifactId>apicurio-registry-avro-serde-kafka</artifactId>
+      <version>3.0.6</version>
+    </dependency>    
+  </dependencies>
+
+   <!-- Build Java Class from Avro file -->
+  <build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro-maven-plugin</artifactId>
+            <version>1.11.0</version>
+            <executions>
+                <execution>
+                    <phase>generate-sources</phase>
+                    <goals>
+                        <goal>schema</goal>
+                    </goals>
+                    <configuration>
+                        <sourceDirectory>${project.basedir}/src/main/avro</sourceDirectory>
+                        <outputDirectory>${project.basedir}/src/main/java</outputDirectory>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>      
+      </plugins>
+  </build>
+  ```
+Para gerar a classe Java através do arquivo Avro, executar a linha de comando:
+  
+  ```
+  mvn org.apache.avro:avro-maven-plugin:schema
+  ```
+
 
 Referências sobre o Apicurio:
 

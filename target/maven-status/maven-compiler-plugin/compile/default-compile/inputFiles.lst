@@ -1,6 +1,8 @@
 /home/opc/projeto/kafka/src/main/java/com/oracle/ProducerStreaming.java
+/home/opc/projeto/kafka/src/main/java/com/oracle/ProducerKafkaSASL_Avro.java
 /home/opc/projeto/kafka/src/main/java/com/oracle/ConsumerStreaming.java
 /home/opc/projeto/kafka/src/main/java/com/oracle/ProducerKafkaSASL_SSL.java
+/home/opc/projeto/kafka/src/main/java/com/oracle/ConsumerKafkaSASL_Avro.java
 /home/opc/projeto/kafka/src/main/java/com/oracle/ConsumerKafkaMTLS.java
 /home/opc/projeto/kafka/src/main/java/com/oracle/ConsumerKafkaSASL_SSL_ACL.java
 /home/opc/projeto/kafka/src/main/java/com/oracle/ConsumerKafkaSASL_SSL.java

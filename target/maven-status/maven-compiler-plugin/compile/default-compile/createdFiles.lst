@@ -3,7 +3,9 @@ com/oracle/ConsumerStreaming.class
 com/oracle/ConsumerKafkaMTLS.class
 com/oracle/ProducerKafkaSASL_SSL.class
 com/oracle/ProducerStreaming.class
+com/oracle/ConsumerKafkaSASL_Avro.class
 com/oracle/ConsumerKafkaSASL_SSL.class
+com/oracle/ProducerKafkaSASL_Avro.class
 com/oracle/ConsumerKafkaSASL_SSL_ACL.class
 com/oracle/ProducerKafkaMTLS.class
 com/oracle/User.class
