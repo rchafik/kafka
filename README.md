@@ -358,7 +358,13 @@ Referências:
 
 **Testes com Schema Registry**
 
-Estamos usando o [Apicurio Registry](https://www.apicur.io/registry/)
+Estamos usando o [Apicurio Registry](https://www.apicur.io/registry/), resumindo, foram dois comandos para executar o schema registry:
+  >Estamos executando dentro de uma VM que possui acesso ao ambiente Kafka criado
+
+  ```
+  docker run -it -p 8080:8080 apicurio/apicurio-registry:3.0.6
+  docker run -it -p 8888:8080 apicurio/apicurio-registry-ui:3.0.6
+  ```
 
 Depois de instalar na VM, foi necessário criar um túnel para as portas do backend e frontend, para conseguir executar localmente a ui:
 
@@ -441,13 +447,54 @@ Para gerar a classe Java através do arquivo Avro, executar a linha de comando:
   mvn org.apache.avro:avro-maven-plugin:schema
   ```
 
-Criamos as classes abaixo para trabalharmos com Avro e conectar no Schema Registry Apicurio:
+Criamos as classes abaixo para trabalharmos com Avro e conectar no Schema Registry Apicurio, e listamos os pontos que consideramos mais relevantes para sua atenção:
+
   - ProducerKafkaSASL_Avro.java
+
+      ```
+      import org.apache.kafka.common.serialization.StringDeserializer;
+
+      import io.apicurio.registry.serde.avro.AvroKafkaDeserializer;
+      import io.apicurio.registry.serde.config.SerdeConfig;
+      import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
+
+      ...
+
+      props.put("key.deserializer", StringDeserializer.class.getName());
+      props.put("value.deserializer", AvroKafkaDeserializer.class.getName());
+      
+      # aqui é o link do Schema Registry apontando para o backend
+      String registryUrl = "http://localhost:8080/apis/registry/v3";
+      props.put(SerdeConfig.REGISTRY_URL, registryUrl);
+      props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, "true");
+      ```
+
   - ConsumerKafkaSASL_Avro.java
 
-Pontos em comum, para observarmos:
+      ```
+      import org.apache.kafka.common.serialization.StringSerializer;
 
+      import io.apicurio.registry.serde.avro.AvroKafkaSerializer;
+      import io.apicurio.registry.serde.config.SerdeConfig;
 
+      ...
+
+      # aqui é o link do Schema Registry apontando para o backend
+      String registryUrl = "http://localhost:8080/apis/registry/v3";
+      properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+      properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, AvroKafkaSerializer.class.getName());
+      properties.put(SerdeConfig.REGISTRY_URL, registryUrl);
+      #propriedade para auto registrar o artefato, caso ele não exista no schema registry
+      properties.put(SerdeConfig.AUTO_REGISTER_ARTIFACT, Boolean.TRUE);
+      ```
+
+Ao executar a classe para produzir a mensagem, podemos observar o artefato criado no schema registry, lembrando que o link para a interface web é http://localhost:8888/:
+
+  ![schema registry](images/09_apicurioUI.png "schema registry")
+
+Ao artefato criado, ir na aba Versions e clicar na versão existente, conseguimos verificar o conteúdo do arquivo Avro criado no Schema Registry:
+
+  ![avro artifact](images/10_schemaRegistryAvroDetail.png "avro artifact")
 
 Referências sobre o Apicurio:
 
