@@ -7,6 +7,7 @@ Os arquivos abaixo são exemplos criados e seus arquivos de propriedades utiliza
  - StreamingProducer.java
 
   > arquivo: streaming-producer.properties
+
     ```
     bootstrap.servers=cell-1.streaming.sa-saopaulo-1.oci.oraclecloud.com:9092
     security.protocol=SASL_SSL
@@ -20,6 +21,7 @@ Os arquivos abaixo são exemplos criados e seus arquivos de propriedades utiliza
  - StreamingConsumer.java
 
   > arquivo: streaming-consumer.properties
+
     ```
     bootstrap.servers=cell-1.streaming.sa-saopaulo-1.oci.oraclecloud.com:9092
     security.protocol=SASL_SSL
@@ -34,7 +36,7 @@ Os arquivos abaixo são exemplos criados e seus arquivos de propriedades utiliza
     ```
 
 **Referências sobre Streaming:**
-  - [Início Rápido do Kafka Java Client e do Serviço Streaming](hhttps://docs.oracle.com/pt-br/iaas/Content/Streaming/Tasks/streaming-kafka-java-client-quickstart.htm#kafka-java-quickstart)
+  - [Início Rápido do Kafka Java Client e do Serviço Streaming](https://docs.oracle.com/pt-br/iaas/Content/Streaming/Tasks/streaming-kafka-java-client-quickstart.htm#kafka-java-quickstart)
 
 
 # Kafka
