@@ -496,9 +496,13 @@ Acessar o artefato criado, aba Versions e clicar na versão existente, conseguim
 
   ![avro artifact](images/10_schemaRegistryAvroDetail.png "avro artifact")
 
-Referências sobre o Apicurio:
+Referências sobre Schema Registry:
 
-- [Exemplos de código](https://github.com/Apicurio/apicurio-registry/blob/main/examples/simple-avro)
+- [Exemplos de código com Apicurio](https://github.com/Apicurio/apicurio-registry/blob/main/examples/simple-avro)
+
+- [Karapace, uma outra opção para Schema Registry](https://www.karapace.io/)
+
+- [Exemplos de código com Karapace](https://instaclustr.medium.com/exploring-karapace-the-open-source-schema-registry-for-apache-kafka-part-1-apache-avro-3a7d09fcb4a8)
 
 # Tasks
 - [x] Produtor e Consumidor Streaming
