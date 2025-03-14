@@ -4,9 +4,7 @@
 
 Os arquivos abaixo são exemplos criados e seus arquivos de propriedades utilizados:
 
- - StreamingProducer.java
-
-  > arquivo: streaming-producer.properties
+ - StreamingProducer.java e arquivo: streaming-producer.properties
 
     ```
     bootstrap.servers=cell-1.streaming.sa-saopaulo-1.oci.oraclecloud.com:9092
@@ -18,9 +16,7 @@ Os arquivos abaixo são exemplos criados e seus arquivos de propriedades utiliza
     enable.idempotence=false
     ```
 
- - StreamingConsumer.java
-
-  > arquivo: streaming-consumer.properties
+ - StreamingConsumer.java e streaming-consumer.properties:
 
     ```
     bootstrap.servers=cell-1.streaming.sa-saopaulo-1.oci.oraclecloud.com:9092
@@ -182,7 +178,7 @@ oci kafka cluster update \
 ```
 
 
-**SSL properties**
+**SSL (mTLS) properties**
 
 Arquivo kafkaclient.properties:
 
@@ -215,6 +211,38 @@ kafka-topics.sh --list \
   --bootstrap-server bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
   --command-config /home/opc/kafka/kafkaclient.properties
 ```
+
+**Arquivos Java de Exemplo com mTLS:**
+
+- Classe KafkaMtlsProducer.java e kafka-mtls-producer.properties:
+
+  ```
+  bootstrap.servers=bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093
+  security.protocol=SSL
+  ssl.certificate.location=/home/opc/kafka/leaf.cert
+  ssl.key.location=/home/opc/kafka/leaf.key
+  ssl.keystore.location=/home/opc/kafka/kafka-keystore.p12
+  ssl.keystore.password=ateam
+  key.serializer=org.apache.kafka.common.serialization.StringSerializer
+  value.serializer=org.apache.kafka.common.serialization.StringSerializer
+  ```
+
+- Classe KafkaMtlsConsumer.java e kafka-mtls-consumer.properties:
+
+  ```
+  bootstrap.servers=bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093
+  security.protocol=SSL
+  ssl.certificate.location=/home/opc/kafka/leaf.cert
+  ssl.key.location=/home/opc/kafka/leaf.key
+  ssl.keystore.location=/home/opc/kafka/kafka-keystore.p12
+  ssl.keystore.password=ateam
+  group.id=group-mtls
+  enable.auto.commit=true
+  auto.commit.interval.ms=1000
+  session.timeout.ms=30000
+  key.deserializer=org.apache.kafka.common.serialization.StringDeserializer
+  value.deserializer=org.apache.kafka.common.serialization.StringDeserializer
+  ```
 
 **SASL_SSL properties**
 
