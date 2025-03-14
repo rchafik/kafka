@@ -12,7 +12,7 @@ Os arquivos abaixo são exemplos criados e seus arquivos de propriedades utiliza
     bootstrap.servers=cell-1.streaming.sa-saopaulo-1.oci.oraclecloud.com:9092
     security.protocol=SASL_SSL
     sasl.mechanism=PLAIN
-    sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="tenancy/OracleIdentityCloudService/user/ocid1.streampool.oc1.sa-saopaulo-1." password="token";
+    sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username=\"tenancy/OracleIdentityCloudService/user/ocid1.streampool.oc1.sa-saopaulo-1.\" password=\"token\";
     key.serializer=org.apache.kafka.common.serialization.StringSerializer
     value.serializer=org.apache.kafka.common.serialization.StringSerializer
     enable.idempotence=false
@@ -26,7 +26,7 @@ Os arquivos abaixo são exemplos criados e seus arquivos de propriedades utiliza
     bootstrap.servers=cell-1.streaming.sa-saopaulo-1.oci.oraclecloud.com:9092
     security.protocol=SASL_SSL
     sasl.mechanism=PLAIN
-    sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="tenancy/OracleIdentityCloudService/user/ocid1.streampool.oc1.sa-saopaulo-1." password="token";
+    sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username=\"tenancy/OracleIdentityCloudService/user/ocid1.streampool.oc1.sa-saopaulo-1.\" password=\"token\";
     group.id=group-java
     enable.auto.commit=true
     auto.commit.interval.ms=1000
