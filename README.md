@@ -1,3 +1,42 @@
+# Streaming
+
+**Exemplos em Java para consumir e produzir mensagens com Streaming:**
+
+Os arquivos abaixo são exemplos criados e seus arquivos de propriedades utilizados:
+
+ - StreamingProducer.java
+
+  > arquivo: streaming-producer.properties
+    ```
+    bootstrap.servers=cell-1.streaming.sa-saopaulo-1.oci.oraclecloud.com:9092
+    security.protocol=SASL_SSL
+    sasl.mechanism=PLAIN
+    sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="tenancy/OracleIdentityCloudService/user/ocid1.streampool.oc1.sa-saopaulo-1." password="token";
+    key.serializer=org.apache.kafka.common.serialization.StringSerializer
+    value.serializer=org.apache.kafka.common.serialization.StringSerializer
+    enable.idempotence=false
+    ```
+
+ - StreamingConsumer.java
+
+  > arquivo: streaming-consumer.properties
+    ```
+    bootstrap.servers=cell-1.streaming.sa-saopaulo-1.oci.oraclecloud.com:9092
+    security.protocol=SASL_SSL
+    sasl.mechanism=PLAIN
+    sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="tenancy/OracleIdentityCloudService/user/ocid1.streampool.oc1.sa-saopaulo-1." password="token";
+    group.id=group-java
+    enable.auto.commit=true
+    auto.commit.interval.ms=1000
+    session.timeout.ms=30000
+    key.deserializer=org.apache.kafka.common.serialization.StringDeserializer
+    value.deserializer=org.apache.kafka.common.serialization.StringDeserializer
+    ```
+
+**Referências sobre Streaming:**
+  - [Início Rápido do Kafka Java Client e do Serviço Streaming](hhttps://docs.oracle.com/pt-br/iaas/Content/Streaming/Tasks/streaming-kafka-java-client-quickstart.htm#kafka-java-quickstart)
+
+
 # Kafka
 
 ![managed kafka](images/00_ManagedKafka.png "managed kafka")
