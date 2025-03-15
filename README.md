@@ -590,7 +590,8 @@ Referências sobre Schema Registry:
   - [x] Plugar uma interface gráfica para administrar o ambiente
   - [x] Testes com Mirror Maker
   - [x] Schema Registry ainda não nativo, mas podemos utilizar um open source (neste caso, usamos o Apicurio). Schema Registry gerenciado está no roadmap para FY27.
-  - [x] [!IMPORTANT] O uso do FQDN do servidor Kafka é obrigatório para conexão
+  > [!IMPORTANT] 
+  - [x] O uso do FQDN do servidor Kafka é obrigatório para conexão
     - Esse é o erro quando tentamos utilizar o IP do servidor: *ERROR: [Producer clientId=producer-1] Connection to node -1 (/10.0.1.238:9093) failed authentication due to: SSL handshake failed*
 
 
