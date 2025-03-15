@@ -1,10 +1,13 @@
-package com.oracle;
+package com.oracle.util;
 
 public enum Environments {
     STREAMING_PRODUCER("streaming-producer"),
     STREAMING_CONSUMER("streaming-consumer"),
     KAFKA_MTLS_PRODUCER("kafka-mtls-producer"),
-    KAFKA_MTLS_CONSUMER("kafka-mtls-consumer");
+    KAFKA_MTLS_CONSUMER("kafka-mtls-consumer"),
+    KAFKA_SASL_SSL_PRODUCER("kafka-sals-ssl-producer"),
+    KAFKA_SASL_SSL_CONSUMER("kafka-sals-ssl-consumer");
+
 
     private final String environment;
  

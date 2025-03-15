@@ -8,6 +8,9 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 
+import com.oracle.util.Environments;
+import com.oracle.util.PropertiesUtil;
+
 public class StreamingConsumer {
 
    public static void main(String[] args) throws Exception {

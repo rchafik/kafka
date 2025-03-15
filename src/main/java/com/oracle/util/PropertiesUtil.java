@@ -1,4 +1,4 @@
-package com.oracle;
+package com.oracle.util;
 
 import java.io.FileInputStream;
 import java.io.IOException;

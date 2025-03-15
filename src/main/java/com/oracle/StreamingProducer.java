@@ -5,6 +5,9 @@ import java.util.Properties;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
+import com.oracle.util.Environments;
+import com.oracle.util.PropertiesUtil;
+
 public class StreamingProducer {
 
    public static void main(String[] args) throws Exception{

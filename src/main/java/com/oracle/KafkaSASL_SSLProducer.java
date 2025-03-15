@@ -8,13 +8,13 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import com.oracle.util.Environments;
 import com.oracle.util.PropertiesUtil;
 
-public class KafkaMtlsProducer {
+public class KafkaSASL_SSLProducer {
 
    public static void main(String[] args) throws Exception{
 
-      String topicName = "ateam-topic-mtls";
+      String topicName = "ateam-topic-sasl-ssl";
 
-      Properties properties = PropertiesUtil.loadProperties(Environments.KAFKA_MTLS_PRODUCER);
+      Properties properties = PropertiesUtil.loadProperties(Environments.KAFKA_SASL_SSL_PRODUCER);
 
       KafkaProducer<String, String> producer = new KafkaProducer<String, String>(properties);
 

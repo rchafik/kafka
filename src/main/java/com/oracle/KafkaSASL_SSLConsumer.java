@@ -11,13 +11,13 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import com.oracle.util.Environments;
 import com.oracle.util.PropertiesUtil;
 
-public class KafkaMtlsConsumer {
+public class KafkaSASL_SSLConsumer {
 
    public static void main(String[] args) throws Exception {
        
-      String topic = "ateam-topic-mtls";
+      String topic = "ateam-topic-sasl-ssl";
 
-      Properties properties = PropertiesUtil.loadProperties(Environments.KAFKA_MTLS_CONSUMER);
+      Properties properties = PropertiesUtil.loadProperties(Environments.KAFKA_SASL_SSL_CONSUMER);
 
       KafkaConsumer<String, String> consumer = new KafkaConsumer<String, String>(properties);
 
