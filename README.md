@@ -624,7 +624,7 @@ Referências sobre Schema Registry:
   - [x] Schema Registry ainda não nativo, mas podemos utilizar um open source (neste caso, usamos o Apicurio). Schema Registry gerenciado está no roadmap para FY27.
   - [x] O uso do FQDN do servidor Kafka é obrigatório para conexão
     - Esse é o erro quando tentamos utilizar o IP do servidor via mTLS: *ERROR: [Producer clientId=producer-1] Connection to node -1 (/10.0.1.238:9093) failed authentication due to: SSL handshake failed*
-    - Esse é o erro quando tentamos usar o IPO do servidor via SASL-SSL: *ERROR: [Producer clientId=producer-1] Connection to node -1 (private-nlb-c1-btaxq3z9d0ziwk0g.sub11252107191.kafkagru.oraclevcn.com/10.0.1.238:9092) failed authentication due to: SSL handshake failed*
+    - Esse é o erro quando tentamos usar o IP do servidor via SASL-SSL: *ERROR: [Producer clientId=producer-1] Connection to node -1 (private-nlb-c1-btaxq3z9d0ziwk0g.sub11252107191.kafkagru.oraclevcn.com/10.0.1.238:9092) failed authentication due to: SSL handshake failed*
 
 
 ## Acknowledgments
