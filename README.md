@@ -574,15 +574,22 @@ Referências sobre Schema Registry:
 - [Exemplos de código com Karapace](https://instaclustr.medium.com/exploring-karapace-the-open-source-schema-registry-for-apache-kafka-part-1-apache-avro-3a7d09fcb4a8)
 
 # Tasks
-- [x] Produtor e Consumidor Streaming
-- [x] Produtor e Consumidor SASL-SCRAM
-- [x] Produtor e Consumidor mTLS
-- [ ] Remover conteúdo sensível, usando arquivo de propriedades
-- [ ] Rever boas práticas, como armazenar os artefatos de segurança em vault ou bucket
-- [x] Entender o que pode ser feito com o super user do Kafka
-- [x] Plugar uma interface gráfica para administrar o ambiente
-- [x] Testes com Mirror Maker
-- [x] Schema Registry ainda não nativo, mas podemos utilizar um open source (neste caso, usamos o Apicurio). Schema Registry gerenciado está no roadmap para FY27.
+
+- **Geral**
+  - [ ] Remover conteúdo sensível, usando arquivo de propriedades (em andamento)
+  - [ ] Rever boas práticas, como armazenar os artefatos de segurança em vault ou bucket
+
+- **Streaming**
+  - [x] Produtor e Consumidor Streaming
+  - [x] Produtor e Consumidor SASL-SCRAM
+
+- **Kafka**
+  - [x] Produtor e Consumidor mTLS
+  - [x] Utilizar super user do Kafka e criação de ACL´s (filas, usuários e permissões entre os artefatos)
+  - [x] Plugar uma interface gráfica para administrar o ambiente
+  - [x] Testes com Mirror Maker
+  - [x] Schema Registry ainda não nativo, mas podemos utilizar um open source (neste caso, usamos o Apicurio). Schema Registry gerenciado está no roadmap para FY27.
+  - [ ] Testes utilizando IP e outros produto para intermediar a conexão com o Kafka (verificar o uso obrigatório do FQDN do servidor)
 
 
 ## Acknowledgments
