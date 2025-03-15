@@ -191,7 +191,7 @@ ssl.keystore.location=/home/opc/kafka/kafka-keystore.p12
 ```
 
 
-**Comandos kafka com SSL**
+**Comandos kafka com SSL (mTLS)**
 ```
 kafka-topics.sh --create \
   --bootstrap-server bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
@@ -255,6 +255,38 @@ ssl.truststore.location=/home/opc/kafka/truststore.jks
 ssl.truststore.password=password
 sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="superUserName" password="password";
 ```
+
+**Arquivos Java de Exemplo com SASL_SSL:**
+
+- Classe KafkaSASL_SSLProducer.java e kafka-sasl-ssl-consumer.properties:
+
+  ```
+  bootstrap.servers=bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092
+  security.protocol=SASL_SSL
+  sasl.mechanism=SCRAM-SHA-512
+  ssl.truststore.location=/home/opc/kafka/truststore.jks
+  ssl.truststore.password=ateam
+  sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="super-user" password="senha";
+  key.serializer=org.apache.kafka.common.serialization.StringSerializer
+  value.serializer=org.apache.kafka.common.serialization.StringSerializer
+  ```
+
+- Classe KafkaSASL_SSLConsumer.java e kafka-sasl-ssl-consumer.properties:
+
+  ```
+  bootstrap.servers=bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092
+  security.protocol=SASL_SSL
+  sasl.mechanism=SCRAM-SHA-512
+  ssl.truststore.location=/home/opc/kafka/truststore.jks
+  ssl.truststore.password=ateam
+  sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="super-user" password="senha";
+  group.id=group-sals-ssl
+  enable.auto.commit=true
+  auto.commit.interval.ms=1000
+  session.timeout.ms=30000
+  key.deserializer=org.apache.kafka.common.serialization.StringDeserializer
+  value.deserializer=org.apache.kafka.common.serialization.StringDeserializer
+  ```
 
 **Comando kafka com SASL_SSL**
 
