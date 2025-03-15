@@ -581,9 +581,10 @@ Referências sobre Schema Registry:
 
 - **Streaming**
   - [x] Produtor e Consumidor Streaming
-  - [x] Produtor e Consumidor SASL-SCRAM
+  - [x] Depois configurei para usar versões mais recentes das bibliotecas kafka, foi necessário definir o parâmetro [enable.idempotence=false] nas propriedades da classe que produz as mensagens, pois estava ocorrendo o erro: *org.apache.kafka.common.errors.UnsupportedVersionException: The broker does not support INIT_PRODUCER_ID*
 
 - **Kafka**
+  - [x] Produtor e Consumidor SASL-SCRAM
   - [x] Produtor e Consumidor mTLS
   - [x] Utilizar super user do Kafka e criação de ACL´s (filas, usuários e permissões entre os artefatos)
   - [x] Plugar uma interface gráfica para administrar o ambiente
