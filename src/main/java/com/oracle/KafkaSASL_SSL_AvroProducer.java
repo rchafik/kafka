@@ -12,7 +12,7 @@ import com.oracle.avro.User;
 import io.apicurio.registry.serde.avro.AvroKafkaSerializer;
 import io.apicurio.registry.serde.config.SerdeConfig;
 
-public class ProducerKafkaSASL_Avro {
+public class KafkaSASL_SSL_AvroProducer {
 
    public static void main(String[] args) throws Exception{
 

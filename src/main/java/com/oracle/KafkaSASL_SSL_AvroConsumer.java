@@ -15,7 +15,7 @@ import io.apicurio.registry.serde.avro.AvroKafkaDeserializer;
 import io.apicurio.registry.serde.config.SerdeConfig;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 
-public class ConsumerKafkaSASL_Avro {
+public class KafkaSASL_SSL_AvroConsumer {
 
    public static void main(String[] args) throws Exception {
        
