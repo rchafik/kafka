@@ -656,12 +656,12 @@ Referências sobre Schema Registry:
 # Tasks
 
 - **Geral**
-  - [ ] Remover conteúdo sensível, usando arquivo de propriedades (em andamento)
+  - [x] Remover conteúdo sensível, usando arquivo de propriedades
   - [ ] Rever boas práticas, como armazenar os artefatos de segurança em vault ou bucket
 
 - **Streaming**
   - [x] Produtor e Consumidor Streaming
-  - [x] Depois configurei para usar versões mais recentes das bibliotecas kafka, foi necessário definir o parâmetro [enable.idempotence=false] nas propriedades da classe que produz as mensagens, pois estava ocorrendo o erro: *org.apache.kafka.common.errors.UnsupportedVersionException: The broker does not support INIT_PRODUCER_ID*
+  - [x] Depois que configurei para usar versões mais recentes das bibliotecas kafka no projeto, foi necessário definir o parâmetro [enable.idempotence=false] nas propriedades da classe que produz as mensagens, pois estava ocorrendo o erro: *org.apache.kafka.common.errors.UnsupportedVersionException: The broker does not support INIT_PRODUCER_ID*
 
 - **Kafka**
   - [x] Produtor e Consumidor SASL-SCRAM
