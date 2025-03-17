@@ -584,6 +584,7 @@ Criamos as classes abaixo para trabalharmos com Avro e conectar no Schema Regist
       ```
 
   - kafka-sasl-ssl-avro-producer.properties
+
     ```
     bootstrap.servers=bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092
     security.protocol=SASL_SSL
@@ -591,28 +592,50 @@ Criamos as classes abaixo para trabalharmos com Avro e conectar no Schema Regist
     ssl.truststore.location=/home/opc/kafka/truststore.jks
     ssl.truststore.password=ateam
     sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="super-user" password="senha";
-    #aqui as classes para serializar a chave e valor estão dentro da própria classe
+    #aqui as informações para serializar a chave e valor para a mensagem estão dentro da própria classe
     #url do schema registry também está definido na classe
     ```
 
   - KafkaSASL_SSL_AvroConsumer.java
 
       ```
-      import org.apache.kafka.common.serialization.StringSerializer;
+      import org.apache.kafka.clients.consumer.ConsumerRecord;
+      import org.apache.kafka.clients.consumer.ConsumerRecords;
+      import org.apache.kafka.clients.consumer.KafkaConsumer;
+      import org.apache.kafka.common.serialization.StringDeserializer;
 
-      import io.apicurio.registry.serde.avro.AvroKafkaSerializer;
+      import com.oracle.avro.User;
+      import com.oracle.util.Environments;
+      import com.oracle.util.PropertiesUtil;
+
+      import io.apicurio.registry.serde.avro.AvroKafkaDeserializer;
       import io.apicurio.registry.serde.config.SerdeConfig;
 
       ...
 
-      # aqui é o link do Schema Registry apontando para o backend
+      Properties properties = PropertiesUtil.loadProperties(Environments.KAFKA_SASL_SSL_AVRO_CONSUMER);
+      properties.put("key.deserializer", StringDeserializer.class.getName());
+      //utilizando a classe para deserializar do schema registry utilizado
+      properties.put("value.deserializer", AvroKafkaDeserializer.class.getName());
+      
       String registryUrl = "http://localhost:8080/apis/registry/v3";
-      properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-      properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, AvroKafkaSerializer.class.getName());
       properties.put(SerdeConfig.REGISTRY_URL, registryUrl);
-      #propriedade para auto registrar o artefato, caso ele não exista no schema registry
-      properties.put(SerdeConfig.AUTO_REGISTER_ARTIFACT, Boolean.TRUE);
       ```
+  
+  - kafka-sasl-ssl-avro-consumer.properties
+
+    ```
+    bootstrap.servers=bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092
+    security.protocol=SASL_SSL
+    sasl.mechanism=SCRAM-SHA-512
+    ssl.truststore.location=/home/opc/kafka/truststore.jks
+    ssl.truststore.password=ateam
+    sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="super-user" password="senha";
+    group.id=group-avro-consumer
+    enable.auto.commit=true
+    auto.commit.interval.ms=1000
+    session.timeout.ms=30000
+    ```
 
 Ao executar a classe para produzir a mensagem, podemos observar o artefato criado no schema registry, lembrando que o link para a interface web é http://localhost:8888/:
 
