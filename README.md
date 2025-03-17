@@ -457,7 +457,7 @@ Referências:
 - [Como usar o Kafka MirrorMaker 2.0 na migração e replicação de dados e nos casos de uso](https://learn.microsoft.com/pt-br/azure/hdinsight/kafka/kafka-mirrormaker-2-0-guide)
 
 
-**Testes com Schema Registry**
+**Testes com Schema Registry e artefatos Avro**
 
 Estamos usando o [Apicurio Registry](https://www.apicur.io/registry/), resumindo, foram dois comandos para executar o schema registry:
   >Estamos executando dentro de uma VM que possui acesso ao ambiente Kafka criado
@@ -478,7 +478,7 @@ Criamos um arquivo Avro: user.avsc
   {
     "type": "record",
     "name": "User",
-    "namespace": "com.oracle",
+    "namespace": "com.oracle.avro",
     "fields": [
       {"name": "id", "type": "int"},
       {"name": "name", "type": "string"},
@@ -552,27 +552,33 @@ Para gerar a classe Java através do arquivo Avro, executar a linha de comando:
 
 Criamos as classes abaixo para trabalharmos com Avro e conectar no Schema Registry Apicurio, e listamos os pontos que consideramos mais relevantes para sua atenção:
 
-  - ProducerKafkaSASL_Avro.java
+  - KafkaSASL_SSL_AvroProducer.java
 
       ```
-      import org.apache.kafka.common.serialization.StringDeserializer;
+      import org.apache.kafka.clients.producer.KafkaProducer;
+      import org.apache.kafka.clients.producer.ProducerConfig;
+      import org.apache.kafka.clients.producer.ProducerRecord;
+      import org.apache.kafka.common.serialization.StringSerializer;
 
-      import io.apicurio.registry.serde.avro.AvroKafkaDeserializer;
+      import com.oracle.avro.User;
+
+      import io.apicurio.registry.serde.avro.AvroKafkaSerializer;
       import io.apicurio.registry.serde.config.SerdeConfig;
-      import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 
       ...
 
-      props.put("key.deserializer", StringDeserializer.class.getName());
-      props.put("value.deserializer", AvroKafkaDeserializer.class.getName());
-      
-      # aqui é o link do Schema Registry apontando para o backend
-      String registryUrl = "http://localhost:8080/apis/registry/v3";
-      props.put(SerdeConfig.REGISTRY_URL, registryUrl);
-      props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, "true");
+      properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+      --aqui usamos a classe do Schema Registry que estamos usando, neste caso io.apicurio.registry.serde.avro.AvroKafkaSerializer
+      properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, AvroKafkaSerializer.class.getName());
+
+      --url do schema registry
+      String registryUrl = "http://localhost:8080/apis/registry/v3";      
+      properties.put(SerdeConfig.REGISTRY_URL, registryUrl);
+      --para auto registrar o artefato avro no schema registry
+      properties.put(SerdeConfig.AUTO_REGISTER_ARTIFACT, Boolean.TRUE);
       ```
 
-  - ConsumerKafkaSASL_Avro.java
+  - KafkaSASL_SSL_AvroConsumer.java
 
       ```
       import org.apache.kafka.common.serialization.StringSerializer;

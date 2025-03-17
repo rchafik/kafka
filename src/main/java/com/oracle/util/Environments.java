@@ -6,7 +6,9 @@ public enum Environments {
     KAFKA_MTLS_PRODUCER("kafka-mtls-producer"),
     KAFKA_MTLS_CONSUMER("kafka-mtls-consumer"),
     KAFKA_SASL_SSL_PRODUCER("kafka-sasl-ssl-producer"),
-    KAFKA_SASL_SSL_CONSUMER("kafka-sasl-ssl-consumer");
+    KAFKA_SASL_SSL_CONSUMER("kafka-sasl-ssl-consumer"),
+    KAFKA_SASL_SSL_AVRO_PRODUCER("kafka-sasl-ssl-avro-producer"),
+    KAFKA_SASL_SSL_AVRO_CONSUMER("kafka-sasl-ssl-avro-consumer");
 
 
     private final String environment;
