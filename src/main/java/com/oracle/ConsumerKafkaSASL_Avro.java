@@ -9,6 +9,8 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
+import com.oracle.avro.User;
+
 import io.apicurio.registry.serde.avro.AvroKafkaDeserializer;
 import io.apicurio.registry.serde.config.SerdeConfig;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;

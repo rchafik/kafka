@@ -546,6 +546,8 @@ Para gerar a classe Java através do arquivo Avro, executar a linha de comando:
   
   ```
   mvn org.apache.avro:avro-maven-plugin:schema
+  ou
+  mvn compile -f "/home/opc/projeto/kafka/pom.xml"
   ```
 
 Criamos as classes abaixo para trabalharmos com Avro e conectar no Schema Registry Apicurio, e listamos os pontos que consideramos mais relevantes para sua atenção:

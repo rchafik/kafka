@@ -3,7 +3,7 @@
  *
  * DO NOT EDIT DIRECTLY
  */
-package com.oracle;
+package com.oracle.avro;
 
 import org.apache.avro.generic.GenericArray;
 import org.apache.avro.specific.SpecificData;
@@ -14,10 +14,10 @@ import org.apache.avro.message.SchemaStore;
 
 @org.apache.avro.specific.AvroGenerated
 public class User extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = -4150903991228972371L;
+  private static final long serialVersionUID = -7765048578070601675L;
 
 
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"User\",\"namespace\":\"com.oracle\",\"fields\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"email\",\"type\":\"string\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"User\",\"namespace\":\"com.oracle.avro\",\"fields\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"email\",\"type\":\"string\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static final SpecificData MODEL$ = new SpecificData();
@@ -174,8 +174,8 @@ public class User extends org.apache.avro.specific.SpecificRecordBase implements
    * Creates a new User RecordBuilder.
    * @return A new User RecordBuilder
    */
-  public static com.oracle.User.Builder newBuilder() {
-    return new com.oracle.User.Builder();
+  public static com.oracle.avro.User.Builder newBuilder() {
+    return new com.oracle.avro.User.Builder();
   }
 
   /**
@@ -183,11 +183,11 @@ public class User extends org.apache.avro.specific.SpecificRecordBase implements
    * @param other The existing builder to copy.
    * @return A new User RecordBuilder
    */
-  public static com.oracle.User.Builder newBuilder(com.oracle.User.Builder other) {
+  public static com.oracle.avro.User.Builder newBuilder(com.oracle.avro.User.Builder other) {
     if (other == null) {
-      return new com.oracle.User.Builder();
+      return new com.oracle.avro.User.Builder();
     } else {
-      return new com.oracle.User.Builder(other);
+      return new com.oracle.avro.User.Builder(other);
     }
   }
 
@@ -196,11 +196,11 @@ public class User extends org.apache.avro.specific.SpecificRecordBase implements
    * @param other The existing instance to copy.
    * @return A new User RecordBuilder
    */
-  public static com.oracle.User.Builder newBuilder(com.oracle.User other) {
+  public static com.oracle.avro.User.Builder newBuilder(com.oracle.avro.User other) {
     if (other == null) {
-      return new com.oracle.User.Builder();
+      return new com.oracle.avro.User.Builder();
     } else {
-      return new com.oracle.User.Builder(other);
+      return new com.oracle.avro.User.Builder(other);
     }
   }
 
@@ -224,7 +224,7 @@ public class User extends org.apache.avro.specific.SpecificRecordBase implements
      * Creates a Builder by copying an existing Builder.
      * @param other The existing Builder to copy.
      */
-    private Builder(com.oracle.User.Builder other) {
+    private Builder(com.oracle.avro.User.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.id)) {
         this.id = data().deepCopy(fields()[0].schema(), other.id);
@@ -244,7 +244,7 @@ public class User extends org.apache.avro.specific.SpecificRecordBase implements
      * Creates a Builder by copying an existing User instance
      * @param other The existing instance to copy.
      */
-    private Builder(com.oracle.User other) {
+    private Builder(com.oracle.avro.User other) {
       super(SCHEMA$, MODEL$);
       if (isValidValue(fields()[0], other.id)) {
         this.id = data().deepCopy(fields()[0].schema(), other.id);
@@ -274,7 +274,7 @@ public class User extends org.apache.avro.specific.SpecificRecordBase implements
       * @param value The value of 'id'.
       * @return This builder.
       */
-    public com.oracle.User.Builder setId(int value) {
+    public com.oracle.avro.User.Builder setId(int value) {
       validate(fields()[0], value);
       this.id = value;
       fieldSetFlags()[0] = true;
@@ -294,7 +294,7 @@ public class User extends org.apache.avro.specific.SpecificRecordBase implements
       * Clears the value of the 'id' field.
       * @return This builder.
       */
-    public com.oracle.User.Builder clearId() {
+    public com.oracle.avro.User.Builder clearId() {
       fieldSetFlags()[0] = false;
       return this;
     }
@@ -313,7 +313,7 @@ public class User extends org.apache.avro.specific.SpecificRecordBase implements
       * @param value The value of 'name'.
       * @return This builder.
       */
-    public com.oracle.User.Builder setName(java.lang.CharSequence value) {
+    public com.oracle.avro.User.Builder setName(java.lang.CharSequence value) {
       validate(fields()[1], value);
       this.name = value;
       fieldSetFlags()[1] = true;
@@ -333,7 +333,7 @@ public class User extends org.apache.avro.specific.SpecificRecordBase implements
       * Clears the value of the 'name' field.
       * @return This builder.
       */
-    public com.oracle.User.Builder clearName() {
+    public com.oracle.avro.User.Builder clearName() {
       name = null;
       fieldSetFlags()[1] = false;
       return this;
@@ -353,7 +353,7 @@ public class User extends org.apache.avro.specific.SpecificRecordBase implements
       * @param value The value of 'email'.
       * @return This builder.
       */
-    public com.oracle.User.Builder setEmail(java.lang.CharSequence value) {
+    public com.oracle.avro.User.Builder setEmail(java.lang.CharSequence value) {
       validate(fields()[2], value);
       this.email = value;
       fieldSetFlags()[2] = true;
@@ -373,7 +373,7 @@ public class User extends org.apache.avro.specific.SpecificRecordBase implements
       * Clears the value of the 'email' field.
       * @return This builder.
       */
-    public com.oracle.User.Builder clearEmail() {
+    public com.oracle.avro.User.Builder clearEmail() {
       email = null;
       fieldSetFlags()[2] = false;
       return this;
