@@ -561,22 +561,39 @@ Criamos as classes abaixo para trabalharmos com Avro e conectar no Schema Regist
       import org.apache.kafka.common.serialization.StringSerializer;
 
       import com.oracle.avro.User;
+      import com.oracle.util.Environments;
+      import com.oracle.util.PropertiesUtil;
 
       import io.apicurio.registry.serde.avro.AvroKafkaSerializer;
       import io.apicurio.registry.serde.config.SerdeConfig;
 
       ...
 
+      Properties properties = PropertiesUtil.loadProperties(Environments.KAFKA_SASL_SSL_AVRO_PRODUCER);
+
       properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-      --aqui usamos a classe do Schema Registry que estamos usando, neste caso io.apicurio.registry.serde.avro.AvroKafkaSerializer
+      //utilizando a classe para serializar do schema registry utilizado
       properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, AvroKafkaSerializer.class.getName());
 
-      --url do schema registry
-      String registryUrl = "http://localhost:8080/apis/registry/v3";      
+      //endpoint do schema registry
+      String registryUrl = "http://localhost:8080/apis/registry/v3";
       properties.put(SerdeConfig.REGISTRY_URL, registryUrl);
-      --para auto registrar o artefato avro no schema registry
+      
+      //auto-registrar o schema no schema registry
       properties.put(SerdeConfig.AUTO_REGISTER_ARTIFACT, Boolean.TRUE);
       ```
+
+  - kafka-sasl-ssl-avro-producer.properties
+    ```
+    bootstrap.servers=bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092
+    security.protocol=SASL_SSL
+    sasl.mechanism=SCRAM-SHA-512
+    ssl.truststore.location=/home/opc/kafka/truststore.jks
+    ssl.truststore.password=ateam
+    sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="super-user" password="senha";
+    #aqui as classes para serializar a chave e valor estão dentro da própria classe
+    #url do schema registry também está definido na classe
+    ```
 
   - KafkaSASL_SSL_AvroConsumer.java
 
