@@ -10,10 +10,11 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import com.oracle.avro.User;
+import com.oracle.util.Environments;
+import com.oracle.util.PropertiesUtil;
 
 import io.apicurio.registry.serde.avro.AvroKafkaDeserializer;
 import io.apicurio.registry.serde.config.SerdeConfig;
-import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 
 public class KafkaSASL_SSL_AvroConsumer {
 
@@ -21,25 +22,15 @@ public class KafkaSASL_SSL_AvroConsumer {
        
       String topic = "users";
 
-      Properties props = new Properties();
-      props.put("bootstrap.servers", "bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092");
-      props.put("security.protocol", "SASL_SSL");
-      props.put("sasl.mechanism", "SCRAM-SHA-512");
-      props.put("ssl.truststore.location", "/home/opc/kafka/truststore.jks");
-      props.put("ssl.truststore.password", "ateam");
-      props.put("sasl.jaas.config", "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"super-user-btaxq3z9d0ziwk0g\" password=\"719e35e5-017c-4cce-bb58-d8ed4f71201e\";");
-      props.put("group.id", "group-0");
-      props.put("enable.auto.commit", "true");
-      props.put("auto.commit.interval.ms", "1000");
-      props.put("session.timeout.ms", "30000");
-      props.put("key.deserializer", StringDeserializer.class.getName());
-      props.put("value.deserializer", AvroKafkaDeserializer.class.getName());
+      Properties properties = PropertiesUtil.loadProperties(Environments.KAFKA_SASL_SSL_AVRO_CONSUMER);
+      properties.put("key.deserializer", StringDeserializer.class.getName());
+      //utilizando a classe para deserializar do schema registry utilizado
+      properties.put("value.deserializer", AvroKafkaDeserializer.class.getName());
       
       String registryUrl = "http://localhost:8080/apis/registry/v3";
-      props.put(SerdeConfig.REGISTRY_URL, registryUrl);
-      props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, "true");
+      properties.put(SerdeConfig.REGISTRY_URL, registryUrl);
 
-      KafkaConsumer<String, User> consumer = new KafkaConsumer<String, User>(props);
+      KafkaConsumer<String, User> consumer = new KafkaConsumer<String, User>(properties);
 
       consumer.subscribe(Arrays.asList(topic));
       System.out.println("Subscribed to topic " + topic);
