@@ -657,7 +657,7 @@ Referências sobre Schema Registry:
 
 - **Geral**
   - [x] Remover conteúdo sensível, usando arquivo de propriedades
-  - [ ] Rever boas práticas, como armazenar os artefatos de segurança em vault ou bucket
+  - [x] Rever boas práticas, como armazenar os artefatos de segurança em vault ou bucket
 
 - **Streaming**
   - [x] Produtor e Consumidor Streaming
