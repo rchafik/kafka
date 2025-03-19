@@ -673,6 +673,7 @@ Referências sobre Schema Registry:
   - [x] O uso do FQDN do servidor Kafka é obrigatório para conexão
     - Esse é o erro quando tentamos utilizar o IP do servidor via mTLS: *ERROR: [Producer clientId=producer-1] Connection to node -1 (/10.0.1.238:9093) failed authentication due to: SSL handshake failed*
     - Esse é o erro quando tentamos usar o IP do servidor via SASL-SSL: *ERROR: [Producer clientId=producer-1] Connection to node -1 (private-nlb-c1-btaxq3z9d0ziwk0g.sub11252107191.kafkagru.oraclevcn.com/10.0.1.238:9092) failed authentication due to: SSL handshake failed*
+  - [ ] Descrever itens de segurança com mais detalhes, principalmente sobre o uso de mTLS e serviços Oracle OCI como CA (autoridade certificadora para uso privado de certificados), como recomendação para ambientes produtivos
 
 
 ## Acknowledgments
@@ -684,5 +685,6 @@ Referências sobre Schema Registry:
 - Joao Tarla (Oracle LAD A-Team Solution Engineer)
 - Sillas Lima (Oracle LAD Solution Architect) 
 - Luciana Oliveira (Oracle LAD A-Team Networking Specialist)
+- Rodrigo Pace de Barros (Oracle LAD A-Team Security Specialist)
 - John Moore (Consulting Member of Technical Staff)
 - Abhishek Bhaumik (Product Manager)
