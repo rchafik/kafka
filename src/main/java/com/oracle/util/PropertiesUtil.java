@@ -1,6 +1,7 @@
 package com.oracle.util;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
@@ -53,8 +54,33 @@ public class PropertiesUtil {
         return secret;
     }
 
+    public static void writeJksFromSecret(String secretOcid) {
+        try {
+            final ConfigFileReader.ConfigFile configFile = ConfigFileReader.parseDefault();
+            final AuthenticationDetailsProvider provider = new ConfigFileAuthenticationDetailsProvider(configFile);
+            SecretsClient client = SecretsClient.builder().build(provider);
+
+            GetSecretBundleRequest getSecretBundleRequest = GetSecretBundleRequest.builder()
+                    .secretId(secretOcid)
+                    .stage(GetSecretBundleRequest.Stage.Latest).build();
+
+            GetSecretBundleResponse response = client.getSecretBundle(getSecretBundleRequest);            
+            Base64SecretBundleContentDetails secretBundleContentDetails = (Base64SecretBundleContentDetails)response.getSecretBundle().getSecretBundleContent();            
+            String secretAsBase64 = secretBundleContentDetails.getContent();
+            byte[] result = Base64.getDecoder().decode(secretAsBase64);
+
+            try (FileOutputStream fos = new FileOutputStream("/home/opc/kafka/teste.jks")) {
+                fos.write(result);
+                System.out.println("Arquivo gerado com sucesso");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unable to load secret " + secretOcid);
+        }
+
+    }    
+
     public static void main(String[] args) {
-        System.out.println("secret: " + getSecret("ocid1.vaultsecret.oc1.sa-saopaulo-1.amaaaaaafioir7iagrctybd6n75azpuvscz6u3jxbboi7gzvgecn2scx26oa"));
-        System.out.println("secret: " + getSecret("ocid1.vaultsecret.oc1.sa-saopaulo-1.amaaaaaafioir7iakklh6uilaseuf3mynrgrrhzy4dljv226e3lcyjnjy32q"));
+        writeJksFromSecret("ocid1.vaultsecret.oc1.sa-saopaulo-1.amaaaaaafioir7ia2blhuqd7f4og2u7g6c4a434vfw5qbibgudbtvlzdgqzq");
     }
 }
