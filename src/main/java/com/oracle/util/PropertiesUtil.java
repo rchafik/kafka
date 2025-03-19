@@ -29,7 +29,7 @@ public class PropertiesUtil {
         return properties;
     }
 
-    public static String getSecret(String secretOcid) {
+    public static String getSecretContent(String secretOcid) {
         String secret = null;
 
         try {
