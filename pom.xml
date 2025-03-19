@@ -61,6 +61,20 @@
       <version>3.0.6</version>
     </dependency>    
 
+    <!-- https://mvnrepository.com/artifact/com.oracle.oci.sdk/oci-java-sdk-secrets -->
+    <dependency>
+        <groupId>com.oracle.oci.sdk</groupId>
+        <artifactId>oci-java-sdk-secrets</artifactId>
+        <version>3.61.0</version>
+    </dependency>    
+
+    <!-- https://mvnrepository.com/artifact/com.oracle.oci.sdk/oci-java-sdk-common-httpclient-jersey -->
+    <dependency>
+        <groupId>com.oracle.oci.sdk</groupId>
+        <artifactId>oci-java-sdk-common-httpclient-jersey</artifactId>
+        <version>3.61.0</version>
+    </dependency>    
+
   </dependencies>
 
   <build>
