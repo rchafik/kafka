@@ -10,10 +10,17 @@ Os arquivos abaixo são exemplos criados e seus arquivos de propriedades utiliza
     bootstrap.servers=cell-1.streaming.sa-saopaulo-1.oci.oraclecloud.com:9092
     security.protocol=SASL_SSL
     sasl.mechanism=PLAIN
-    sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="tenancy/OracleIdentityCloudService/user/ocid1.streampool.oc1.sa-saopaulo-1." password="token";
+    sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="tenancyName/YourDomainOrNotTestIt/username/ocid1.streampool.oc1.sa-saopaulo-1." password="yourAuthToken";
     key.serializer=org.apache.kafka.common.serialization.StringSerializer
     value.serializer=org.apache.kafka.common.serialization.StringSerializer
+    #retries on transient errors and load balancing disconnections
+    retries=3
+    #limit request size to 1MB = 1024 x 1024
+    max.request.size=1048576
+    #need to set this to false, because [Idempotent production] are not yet implemented in the Streaming service
+    #reference: https://docs.oracle.com/en-us/iaas/Content/Streaming/Tasks/kafkacompatibility.htm
     enable.idempotence=false
+    acks=all
     ```
 
  - StreamingConsumer.java e streaming-consumer.properties:
@@ -29,6 +36,8 @@ Os arquivos abaixo são exemplos criados e seus arquivos de propriedades utiliza
     session.timeout.ms=30000
     key.deserializer=org.apache.kafka.common.serialization.StringDeserializer
     value.deserializer=org.apache.kafka.common.serialization.StringDeserializer
+    #limit request size to 1MB per partition = = 1024 x 1024
+    max.partition.fetch.bytes=1048576
     ```
 
 **Referências sobre Streaming:**
