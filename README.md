@@ -103,7 +103,7 @@ oci kafka cluster create \
 
 **Habilitar o Super User para utilizar com SASL_SSL**
 
-  >Primeiro deverá ser criado um vault e um secret e copiar o ocid do secret, para executar o comando
+  >Primeiro deverá ser criado um vault e um secret do tipo **Manual secret generation**. Utilizar o ocid do secret, para executar o comando ou via console, clicando no botão **Update SALS SCRAM** que fica no Kafka Cluster, e associar o Vault e o Secret criado.
 
 ```
 oci kafka cluster enable-superuser \
