@@ -127,31 +127,52 @@ oci kafka cluster enable-superuser \
 # Preparando os itens que serão necessário para acessar e configurar o kafka cluster após sua criação
 
 **generate a CA key**
+Gerar uma chave privada RSA protegida por senha com criptografia AES-256.
+Esse comando é usado para criar uma chave privada que pode ser usada para assinar certificados digitais.
+Comumente utilizado em infraestruturas de chave pública (PKI) para criar uma Autoridade Certificadora (CA).
 ```
 openssl genpkey -algorithm RSA -out rootCA.key -aes256 -pass pass:yourpassword -pkeyopt rsa_keygen_bits:4096
 ```
 
 **generate CA self signed cert:**
+Esse comando cria um certificado autoassinado no formato X.509, usando a chave privada gerada anteriormente (rootCA.key). Ele é usado para configurar uma Autoridade Certificadora (CA).
+Esse certificado rootCA.pem pode ser usado como Autoridade Certificadora (CA) para assinar certificados de outros servidores e dispositivos.
+É útil para criar uma infraestrutura de certificação privada, por exemplo, em empresas, VPNs ou redes internas.
+Pode ser instalado em clientes para que reconheçam certificados assinados por essa CA como confiáveis.
 ```
 openssl req -x509 -new -nodes -key rootCA.key -sha256 -days 3650 -out rootCA.pem -passin pass:yourpassword
 ```
 
 **create leaf cert private key and csr(cert signed request):**
+Esse comando gera uma chave privada RSA de 2048 bits, chamada leaf.key, que será usada para criar um certificado "Leaf" (folha), ou seja, um certificado de entidade final.
+Essa chave será usada para criar um certificado para um servidor ou cliente.
+É um certificado de entidade final, ou seja, não é uma CA, mas sim um certificado assinado por uma CA (como a rootCA.pem que criamos antes).
 ```
 openssl genpkey -algorithm RSA -out leaf.key -pkeyopt rsa_keygen_bits:2048
 ```
 
 **create leaf cert csr:**
+Esse comando gera uma CSR (Certificate Signing Request), que é um pedido de assinatura de certificado. 
+O arquivo leaf.csr será enviado para uma Autoridade Certificadora (CA) para que ela assine e emita um certificado válido.
+A CSR (leaf.csr) será enviada para uma CA (Autoridade Certificadora), que pode ser:
+  - Uma CA pública como Let’s Encrypt, DigiCert, GlobalSign.
+  - Uma CA privada, como a **rootCA.pem** criada anteriormente.
 ```
 openssl req -new -key leaf.key -out leaf.csr
 ```
 
 **use root CA to sign leaf cert:**
+Esse comando assina a CSR (leaf.csr) usando a CA rootCA.pem, gerando um certificado final (leaf.crt). Esse certificado pode ser usado por servidores ou clientes para estabelecer conexões seguras.
+O arquivo leaf.crt gerado será um certificado assinado pela sua CA **(rootCA.pem)**.
+Esse certificado pode ser usado em servidores HTTPS/TLS (Apache, Nginx, etc.), autenticação de clientes, VPNs, entre outros.
 ```
 openssl x509 -req -in leaf.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out leaf.crt -days 825 -sha256 -passin pass:yourpassword
 ```
 
 **Create kafka-keystore.p12 file, run the command below**
+Esse comando gera um arquivo PKCS#12 (.p12) contendo a chave privada e o certificado para ser usado no Keystore do Apache Kafka.
+O Apache Kafka pode usar TLS/SSL para comunicação segura entre brokers, produtores e consumidores.
+O arquivo kafka-keystore.p12 é necessário para configurar o Keystore, permitindo que o Kafka use o certificado e a chave privada para autenticação e criptografia.
 ```
 openssl pkcs12 -export -in leaf.crt -inkey leaf.key -out kafka-keystore.p12 -name kafka-key
 ```
@@ -161,6 +182,8 @@ openssl pkcs12 -export -in leaf.crt -inkey leaf.key -out kafka-keystore.p12 -nam
 [Certificado Digicert para o jks](https://cacerts.digicert.com/DigiCertGlobalRootG2.crt.pem?_gl=1*1c1f9jy*_gcl_au*MTk2Mjc0ODc1LjE3NDA2ODAzNTM.)
 
 **Geração da truststore.jks**
+Esse comando adiciona um certificado de Autoridade Certificadora (CA) (DigiCertGlobalRootG2.crt.pem) ao Truststore (truststore.jks). 
+Isso permite que o sistema reconheça certificados assinados por essa CA como confiáveis.
 ```
 keytool -keystore truststore.jks -storepass password -alias oracle -import -file DigiCertGlobalRootG2.crt.pem
 ```
