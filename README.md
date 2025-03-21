@@ -223,8 +223,6 @@ Arquivo kafkaclient.properties:
 
 ```
 security.protocol=SSL
-ssl.certificate.location=/home/opc/kafka/leaf.cert
-ssl.key.location=/home/opc/kafka/leaf.key
 ssl.keystore.password=password
 ssl.keystore.location=/home/opc/kafka/kafka-keystore.p12
 ```
@@ -258,8 +256,6 @@ kafka-topics.sh --list \
   ```
   bootstrap.servers=bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093
   security.protocol=SSL
-  ssl.certificate.location=/home/opc/kafka/leaf.cert
-  ssl.key.location=/home/opc/kafka/leaf.key
   ssl.keystore.location=/home/opc/kafka/kafka-keystore.p12
   ssl.keystore.password=ateam
   key.serializer=org.apache.kafka.common.serialization.StringSerializer
@@ -271,8 +267,6 @@ kafka-topics.sh --list \
   ```
   bootstrap.servers=bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093
   security.protocol=SSL
-  ssl.certificate.location=/home/opc/kafka/leaf.cert
-  ssl.key.location=/home/opc/kafka/leaf.key
   ssl.keystore.location=/home/opc/kafka/kafka-keystore.p12
   ssl.keystore.password=ateam
   group.id=group-mtls
