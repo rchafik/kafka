@@ -741,7 +741,13 @@ Referências sobre Schema Registry:
 
 # Testes com mTLS do Kafka, usando OCI Certificate Authority e ACL Kafka (em andamento)
 
+Visão alto nível dos componentes:
+
 ![arquitetura](images/11_CAmTLSandCertificates.png "arquitetura")
+
+Fluxo de configuração:
+
+![arquitetura](images/12_FluxomTSL_with_OCI_CertitificateAuthority.png "arquitetura")
 
 **Atualizar o openssl**
 
