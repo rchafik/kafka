@@ -351,7 +351,7 @@ kafka-acls.sh --bootstrap-server bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopa
 **Setup de ACL para mTLS**
 >Importante: para realizar as configurações de ACL, deve-se usar o super user e SASL-SCRAM, e depois usar mTLS, para consumir ou produzir as mensagens.
 
-Antes de iniciar, foi necessário criar os certificados de cliente, informando apenas com o **CN** em seu processo de criação:
+Antes de iniciar, foi necessário criar os certificados do cliente, informando apenas o atributo **CN** em seu processo de criação:
 
 ```
 openssl x509 -in test.crt -noout -subject
