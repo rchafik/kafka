@@ -326,7 +326,9 @@ sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule require
 ```
 kafka-broker-api-versions.sh --bootstrap-server bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 --command-config kafkasasl.properties
 ```
-**Usando Super User para criar novo usuário**
+**Usando Super User para criar novo usuário e realizar configuração de ACL**
+>Importante: para realizar as configurações de ACL, deve-se usar o super user e SASL-SCRAM.
+
 ```
 kafka-configs.sh --bootstrap-server bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
   --alter --add-config "SCRAM-SHA-512=[password=ateam2025]" \
@@ -345,6 +347,57 @@ kafka-acls.sh --bootstrap-server bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopa
   --command-config kafkasasl.properties
 
 ```
+
+**Setup de ACL para mTLS**
+>Importante: para realizar as configurações de ACL, deve-se usar o super user e SASL-SCRAM, e depois usar mTLS, para consumir ou produzir as mensagens.
+
+Antes de iniciar, foi necessário criar os certificados de cliente, informando apenas com o **CN** em seu processo de criação:
+
+```
+openssl x509 -in test.crt -noout -subject
+subject=CN = Test
+```
+
+Para criar a fila e suas permissões, usamos a conexão SASL-SCRAM, e o subject extraído do certificado:
+
+```
+kafka-topics.sh --create \
+--bootstrap-server bootstrap-clstr-7qwubqtlny66bzpo.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+--partitions 1 \
+--topic teste-mtls \
+--command-config kafkasasl.properties
+
+kafka-acls.sh \
+--bootstrap-server bootstrap-clstr-7qwubqtlny66bzpo.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+--add --allow-principal "User:CN=Test" \
+--operation Read --operation Write --operation Describe \
+--topic teste-mtls \
+--command-config kafkasasl.properties
+
+kafka-acls.sh \
+--bootstrap-server bootstrap-clstr-7qwubqtlny66bzpo.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+--add --allow-principal "User:CN=Test" \
+--operation Read --operation Describe --group '*' \
+--command-config kafkasasl.properties
+
+```
+
+Aqui usamos o mTLS para produzir e consumir as mensagens, usando o certificado criado e assinado pela CA, que está no arquivo kafka-keystore.p12 referenciado no arquivo de propriedades kafkaclient.properties:
+
+```
+kafka-console-consumer.sh \
+--bootstrap-server bootstrap-clstr-7qwubqtlny66bzpo.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
+--topic teste-mtls \
+--from-beginning \
+--consumer.config kafkaclient.properties
+
+
+kafka-console-producer.sh \
+--broker-list bootstrap-clstr-7qwubqtlny66bzpo.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
+--topic teste-mtls \
+--producer.config kafkaclient.properties
+```
+
 **Links sobre ACLs**
 - [Manage Access Control Lists (ACLs) for Authorization in Confluent Platform](https://docs.confluent.io/platform/current/security/authorization/acls/manage-acls.html)
 
