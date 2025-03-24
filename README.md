@@ -754,10 +754,10 @@ Links utilizados:
 
 Comando para extrair o subject do certificado do cliente utilizado:
 
-    ```
-    openssl x509 -in chafik.pem -noout -subject
-    ```
-    
+  ```
+  openssl x509 -in chafik.pem -noout -subject
+  ```
+
 Referências: 
 
 - [Securing Kafka with Mutual TLS and ACLs](https://medium.com/lydtech-consulting/securing-kafka-with-mutual-tls-and-acls-b235a077f3e3)
