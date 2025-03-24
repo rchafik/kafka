@@ -739,7 +739,9 @@ Referências sobre Schema Registry:
 
 - [Exemplos de código com Karapace](https://instaclustr.medium.com/exploring-karapace-the-open-source-schema-registry-for-apache-kafka-part-1-apache-avro-3a7d09fcb4a8)
 
-# Testes com mTLS e usando OCI para criar uma CA
+# Testes com mTLS do Kafka, usando OCI Certificate Authority e ACL Kafka** (em andamento)
+
+![arquitetura](images/11_CAmTLSandCertificates.png "arquitetura")
 
 **Atualizar o openssl**
 
@@ -750,16 +752,11 @@ Links utilizados:
 - [How To Install OpenSSL 3.x on CentOS 7 / RHEL 7](https://computingforgeeks.com/how-to-install-openssl-3-x-on-centos-rhel-7/)
 - [Installing openssl 3: Can't locate Pod/Html.pm in @INC](https://stackoverflow.com/questions/72702422/installing-openssl-3-cant-locate-pod-html-pm-in-inc)
 
-
-**Testes com mTLS e ACL Kafka** (em andamento)
-
-Aguardando a atualização do Kafka ficar pronta com o certificado da CA criada dentro da OCI e uso dos certificados de clientes emitidos por ela.
-
 Comando para extrair o subject do certificado do cliente utilizado:
     ```
     openssl x509 -in chafik.pem -noout -subject
     ```
-Referências: (em validação, aguardando retorno do PM, pois ele ainda não realizou testes com isso)
+Referências: 
 
 - [Securing Kafka with Mutual TLS and ACLs](https://medium.com/lydtech-consulting/securing-kafka-with-mutual-tls-and-acls-b235a077f3e3)
 
