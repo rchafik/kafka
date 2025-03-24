@@ -739,7 +739,7 @@ Referências sobre Schema Registry:
 
 - [Exemplos de código com Karapace](https://instaclustr.medium.com/exploring-karapace-the-open-source-schema-registry-for-apache-kafka-part-1-apache-avro-3a7d09fcb4a8)
 
-# Testes com mTLS do Kafka, usando OCI Certificate Authority e ACL Kafka** (em andamento)
+# Testes com mTLS do Kafka, usando OCI Certificate Authority e ACL Kafka (em andamento)
 
 ![arquitetura](images/11_CAmTLSandCertificates.png "arquitetura")
 
@@ -753,9 +753,11 @@ Links utilizados:
 - [Installing openssl 3: Can't locate Pod/Html.pm in @INC](https://stackoverflow.com/questions/72702422/installing-openssl-3-cant-locate-pod-html-pm-in-inc)
 
 Comando para extrair o subject do certificado do cliente utilizado:
+
     ```
     openssl x509 -in chafik.pem -noout -subject
     ```
+    
 Referências: 
 
 - [Securing Kafka with Mutual TLS and ACLs](https://medium.com/lydtech-consulting/securing-kafka-with-mutual-tls-and-acls-b235a077f3e3)
