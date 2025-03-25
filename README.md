@@ -405,6 +405,8 @@ kafka-console-producer.sh \
 
 - [User authentication and authorization in Apache Kafka](https://developer.ibm.com/tutorials/kafka-authn-authz/)
 
+- [Securing Kafka with Mutual TLS and ACLs](https://medium.com/lydtech-consulting/securing-kafka-with-mutual-tls-and-acls-b235a077f3e3)
+
 **Testes com Interface Gráfica com o Kafka**
 
 Utilizamos o [kafka-ui](https://github.com/provectus/kafka-ui)
@@ -857,10 +859,6 @@ Comando para extrair o subject do certificado do cliente utilizado:
   ```
   openssl x509 -in chafik.pem -noout -subject
   ```
-
-Referências: 
-
-- [Securing Kafka with Mutual TLS and ACLs](https://medium.com/lydtech-consulting/securing-kafka-with-mutual-tls-and-acls-b235a077f3e3)
 
 # Tasks
 
