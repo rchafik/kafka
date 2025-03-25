@@ -747,7 +747,7 @@ Visão alto nível dos componentes:
 
 Fluxo de configuração:
 
-![arquitetura](images/12_FluxomTSL_with_OCI_CertitificateAuthority.png "arquitetura")
+![arquitetura](images/12_Fluxo_mTSL_with_OCI_CertitificateAuthority.png "arquitetura")
 
 **Atualizar o openssl**
 
