@@ -751,12 +751,106 @@ Fluxo de configuração:
 
 **Atualizar o openssl**
 
-Foi necessário recompilar o openssl para incluir o cipher necessário para gerar a master key da CA que será utilizada dentro da OCI.
+Foi preciso recompilar o openssl para incluir o cipher necessário para gerar a master key da CA que será utilizada dentro da OCI.
 >**Observação**: utilizamos como sistema operacional Oracle Linux Server 8.9
+
+Versão openssl antes de atualizar:
+
+  ```
+    openssl version
+    OpenSSL 1.1.1k  FIPS 25 Mar 2021
+  ```
+
+Versão openssl depois de atualizar, seguimos os links que constam como referência:
+
+  ```
+    openssl version
+    OpenSSL 3.1.3 19 Sep 2023 (Library: OpenSSL 3.1.3 19 Sep 2023)
+  ```
+
+**Criando a Certificate Authority na OCI**
+
+Criação da chave privada da CA
+ 
+ ```
+ openssl genrsa 2048 > ca-key.pem
+ ```
+
+Precisamos ter um Vault já criado na OCI. 
+Vamos acessar a aba **Master Encryption Keys** e cliar no botão "Create Key".
+
+Após clicar no botão “Create Key”, a janela de configuração da sua Master Encryption Key será aberta. Nela selecione o box “Import External key”. Isso abrirá a seção de “Wrapping Key Information”. Nela, passe o mouse sobre o item “Public Wrapping Key” e clique no link “Copy” conforme mostra a imagem:
+
+![wrapping key](images/13_CreatingMasterKeyCopyPublicWrappingKey.png "wrapping key")
+
+Feito isso, grave o valor da Public Wrapping Key em um arquivo de texto [vault-public-wrapping.key] para poder utiliza-la durante o processo de import da Master Encryption Key (MEK) da Certificate Authority (CA) que será criada. 
+
+Antes de prosseguir, vamos precisar de uma chave AES temporária para ser utilizada durante o processo:
+
+ ```
+  openssl rand -out temporary-AES.key 32
+ ```
+
+O arquivo [temporary-AES.key] será a chave de criptografia temporária que vamos utilizar no processo de empacotamento da chave primária da CA.
+
+Empacote a chave AES temporária com a chave pública extraída do seu OCI Vault usando RSA-OAEP com SHA-256:
+
+ ```
+  openssl pkeyutl -encrypt -in temporary-AES.key -inkey vault-public-wrapping.key -pubin -out temporary-AES-file.key -pkeyopt rsa_padding_mode:oaep -pkeyopt rsa_oaep_md:sha256
+ ```
+
+ Onde: 
+  - [vault-public-wrapping.key] Arquivo de texto contendo a Public Wrapping Key copiada do Vault no passo anterior
+  - [temporary-AES-file.key] Arquivo que será gerado após a execução do comando e conterá a chave ca-key.pem empacotada utilizando a Wrapping Key Pública do Vault
+
+Gere um código hexadecimal do arquivo da chave privada da CA, que será uma variável de ambiente do Linux contendo o código hexadecimal gerado a partir da chave privada ca-key.pem:
+
+  ```
+    temporary_AES_key_hexdump=$(hexdump -v -e '/1 "%02x"' < temporary-AES.key)
+  ```  
+
+Agora precisaremos converter a chave [ca-key.pem] do formato **PEM** para o formato **DER**:
+
+  ```
+    openssl pkcs8 -topk8 -nocrypt -inform PEM -outform DER -in ca-key.pem -out ca-key.der
+  ```
+
+O arquivo [ca-key.der] é a chave privada da CA, que foi criada inicialmente, convertidada para o formato DER.
+
+Neste passo vamos empacotar a chave privada no formato DER utilizando a variável de ambiente criada anteriormente:
+
+  ```
+    openssl enc -id-aes256-wrap-pad -iv A65959A6 -K $temporary_AES_key_hexdump -in ca-key.der -out wrapped-target-key.der
+  ```
+
+Onde:
+  - [$temporary_AES_key_hexdump] Código hexadecimal gerado no passo anterior
+  - [wrapped-target-key.der] Chave privada da CA empacotada utilizando a Public Wrapping Key copiada do Vault
+
+Por fim, crie o material final a ser importado no OCI Vault concatenando os itens gerados nos passos anteriores da seguinte forma:
+
+  ```
+    cat temporary-AES-file.key wrapped-target-key.der > final-wrapped-material.key
+  ```  
+
+Vamos utilizar o arquivo [final-wrapped-material.key] e importá-lo para dentro do OCI Vault para criação da Master Encryption Key.
+
+Criação da Master Key:
+
+Parte 01:
+
+![master key creation](images/14_CreatingMasterKeyPart01.png "master key creation")
+
+Parte 02:
+
+![master key creation](images/15_CreatingMasterKeyPart02.png "master key creation")
+
+Ao final, clique no botão "Create Key" e aguarde sua ativação.
 
 Links utilizados:
 - [How To Install OpenSSL 3.x on CentOS 7 / RHEL 7](https://computingforgeeks.com/how-to-install-openssl-3-x-on-centos-rhel-7/)
 - [Installing openssl 3: Can't locate Pod/Html.pm in @INC](https://stackoverflow.com/questions/72702422/installing-openssl-3-cant-locate-pod-html-pm-in-inc)
+- [Configuring OpenSSL Patch to Wrap Key Material](https://docs.oracle.com/en-us/iaas/Content/KeyManagement/Tasks/to_configure_and_patch_openssl.htm)
 
 Comando para extrair o subject do certificado do cliente utilizado:
 
