@@ -770,7 +770,7 @@ Versão openssl depois de atualizar, seguimos os links que constam como referên
     OpenSSL 3.1.3 19 Sep 2023 (Library: OpenSSL 3.1.3 19 Sep 2023)
   ```
 
-**Criando a Certificate Authority na OCI**
+**Criação e Configuração deda Master Encryption Key da CA**
 
 Criação da chave privada da CA
  
@@ -853,6 +853,45 @@ Links utilizados:
 - [How To Install OpenSSL 3.x on CentOS 7 / RHEL 7](https://computingforgeeks.com/how-to-install-openssl-3-x-on-centos-rhel-7/)
 - [Installing openssl 3: Can't locate Pod/Html.pm in @INC](https://stackoverflow.com/questions/72702422/installing-openssl-3-cant-locate-pod-html-pm-in-inc)
 - [Configuring OpenSSL Patch to Wrap Key Material](https://docs.oracle.com/en-us/iaas/Content/KeyManagement/Tasks/to_configure_and_patch_openssl.htm)
+
+
+**Criação e Configuração da Certificate Authority (CA)**
+
+Para efetuar a criação da Certificate Authority clique no menu principal da sua console OCI e vá em “Identity & Security -> Certificates -> Certificate Authority”.
+
+Ao clicar no botão “Create Certificate Authority” o workflow de criação será aberto. Preencha as informações requisitadas:
+
+Basic Information:
+
+![CA creation](images/16_CreatingCA_step01.png "CA creation")
+
+
+Subject Information:
+
+![CA creation](images/17_CreatingCA-step02.png "CA creation")
+
+> Importante: Neste tutorial utilizaremos um certificado auto assinado, ou seja, ele não será gerado por uma Certificate Authority pública.
+
+
+Authority Configuration:
+
+![CA creation](images/18_CreatingCA-step03.png "CA creation")
+
+> Importante: Selecionar a Master Key criada no passo anterior.
+
+Rules:
+
+![CA creation](images/19_CreatingCA-step04.png "CA creation")
+
+Revocation Configuration:
+
+![CA creation](images/20_CreatingCA-step05.png "CA creation")
+
+Em Summary, valide os dados informados e clique no botão "Create Certificate Authority":
+
+![CA Summary](images/20_CreatingCA-step05.png "CA Summary")
+
+
 
 Comando para extrair o subject do certificado do cliente utilizado:
 
