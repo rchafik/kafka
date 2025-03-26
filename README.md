@@ -965,6 +965,74 @@ Summary, check your information and click button "Create Certificate":
 
 ![summary](images/27_CertificateCreation-step05.png "summary")
 
+Ao fim deste procedimento o certificado do cliente está inserido e assinado pela CA dentro da OCI.
+
+**Configuração do Kafka Cluster do mTLS com a CA da OCI e uso dos certificados dos Clients**
+
+O seu cluster Kafka precisará estar criado e com o super user habilitado, pois é com o super user via conexão SASL-SCRAM que será possível realizar posteriormente, as configurações de ACL do Kafka.
+
+Vamos precisar atualizar o mTLS do Kafka com o certificado da CA criada na OCI, e com isso, todos os certificados assinados por essa CA poderão se autenticar no Kafka Cluster via mTLS.
+
+Acesse Certificates, Certificate Authorities, entre na CA criada anteriormente e vá em Versions.
+Clique nos pontos e depois em "View Content":
+
+![certificado](images/28_CA_CertificateViewContent.png "certificado")
+
+Faça o download ou copie o conteúdo do Cerfificate PEM:
+
+
+![certificado download](images/29_CA_CertificateDonwload.png "certificado download")
+
+Vamos atualizar o Kafka Cluster via [oci cli] com o conteúdo deste arquivo da CA:
+
+    ```  
+    oci kafka cluster update \
+    --client-certificate-bundle "your PEM file from CA" \
+    --kafka-cluster-id ocid1.kafkacluster.oc1.sa-vinhedo-1.xxx \
+    --region sa-vinhedo-1  
+    ```    
+
+**Problema** encontrado no Kafka Cluster em , pois após realizar esse procedimento a porta de mTLS (9093) para de responder.
+Reportado no canal do slack, ao PM e ao Tech Leader, aguardando resolução.
+
+**Setup dos Clientes com mTLS assinados pela CA**
+
+Precisamos baixar o certificado assinado pela CA da OCI do cliente.
+Para realizar o download do arquivo, acessar a OCI Web Console, entre em Certificates, Certificates, escolher o certificado criado anteriormente e "Versions":
+
+![certificado view content](images/30_ClientCertificateViewContent.png "certificado view content")
+
+Realizar o download ou copiar seu conteúdo salvando o arquivo com nome de [clienteA.pem]:
+
+![certificado download](images/31_ClienteCertificateDownload.png "certificado download")
+
+Gerar o arquivo [kafka-keystore-clienteA.p12] para o cliente produzir e consumir mensagens via mTLS.
+
+ ```  
+  openssl pkcs12 -export -in clienteA.pem -inkey client.key -out kafka-keystore-clienteA.p12 -name kafka-key
+ ```  
+
+Onde:
+  - client.key: arquivo da chave privada do cliente gerada anteriormente;
+  - clienteA.pem: download do certificado do cliente assinado pela CA da OCI;
+  - kafka-keystore-clienteA.p12: arquivo P12, para ser utilizado no seu arquivo de configuração para comunicação com o Kafka.
+
+
+Arquivo kafkaclientA.properties:
+
+  ```  
+    security.protocol=SSL
+    ssl.keystore.password=password
+    ssl.keystore.location=/home/opc/kafka/kafka-keystore-clienteA.p12
+  ```  
+
+Configure ACL do Kafka com o super user para conforme o subject utilizado no certificado e realize alguns testes:
+
+  ```  
+  openssl x509 -in clienteA.pem -noout -subject
+  subject=CN = ClienteA
+  ```    
+
 # Tasks
 
 - **Geral**
