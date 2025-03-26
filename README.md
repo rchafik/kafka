@@ -889,7 +889,7 @@ Revocation Configuration:
 
 Em Summary, valide os dados informados e clique no botão "Create Certificate Authority":
 
-![CA Summary](images/20_CreatingCA-step05.png "CA Summary")
+![CA Summary](images/21_CreatingCA-step06.png "CA Summary")
 
 Esta CA privada que foi criada será a responsável pela emissão dos Certificados a serem utilizados para a conexão **mTLS** a ser fechada entre o **cliente** (produtor e consumidor de mensagens) e o **Kafka Cluster**.
 
