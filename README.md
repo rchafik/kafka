@@ -985,12 +985,12 @@ Faça o download ou copie o conteúdo do Cerfificate PEM:
 
 Vamos atualizar o Kafka Cluster via [oci cli] com o conteúdo deste arquivo da CA:
 
-    ```  
-    oci kafka cluster update \
-    --client-certificate-bundle "your PEM file from CA" \
-    --kafka-cluster-id ocid1.kafkacluster.oc1.sa-vinhedo-1.xxx \
-    --region sa-vinhedo-1  
-    ```    
+ ```  
+  oci kafka cluster update \
+  --client-certificate-bundle "your PEM file from CA" \
+  --kafka-cluster-id ocid1.kafkacluster.oc1.sa-vinhedo-1.xxx \
+  --region sa-vinhedo-1  
+ ```    
 
 **Problema** encontrado no Kafka Cluster em , pois após realizar esse procedimento a porta de mTLS (9093) para de responder.
 Reportado no canal do slack, ao PM e ao Tech Leader, aguardando resolução.
@@ -1021,12 +1021,12 @@ Onde:
 Arquivo kafkaclientA.properties:
 
   ```  
-    security.protocol=SSL
-    ssl.keystore.password=password
-    ssl.keystore.location=/home/opc/kafka/kafka-keystore-clienteA.p12
+  security.protocol=SSL
+  ssl.keystore.password=password
+  ssl.keystore.location=/home/opc/kafka/kafka-keystore-clienteA.p12
   ```  
 
-Configure ACL do Kafka com o super user para conforme o subject utilizado no certificado e realize alguns testes:
+Configure ACL do Kafka com o **super user** conforme o subject utilizado no certificado e realize alguns testes:
 
   ```  
   openssl x509 -in clienteA.pem -noout -subject
