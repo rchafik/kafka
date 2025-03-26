@@ -893,6 +893,77 @@ Em Summary, valide os dados informados e clique no botão "Create Certificate Au
 
 Esta CA privada que foi criada será a responsável pela emissão dos Certificados a serem utilizados para a conexão **mTLS** a ser fechada entre o **cliente** (produtor e consumidor de mensagens) e o **Kafka Cluster**.
 
+**Criação dos Certificados SSL Client**
+
+Uma vez que já temos a CA (Certificate Authority) criada, podemos então iniciar a criação dos certificados SSL que serão utilizados na conectividade mTLS a ser fechada entre o cliente e o OCI Kafka Cluster.
+
+Antes de efetuar a criação dos certificados, precisaremos criar a private key para os certificados e os arquivos CSR (Certified Signing Request) e CERT (Certificate) para cada cliente. 
+Estes arquivos serão importados dentro do OCI Certificates para que eles sejam assinados pela CA e, assim, possam ser utilizados no acesso mTLS.
+
+Para criar o certificado SSL que será utilizado no Cliente, precisaremos executar alguns comandos OpenSSL para gerar:
+
+  - Chave Privada do Cliente
+  - Requisição de Assinatura de Certificado para o Cliente (a ser realizado pela CA que foi criada no passo anterior)
+
+Para criar a Chave Privada do Cliente, execute os seguintes comandos:
+  ```
+    openssl genpkey -algorithm RSA -out client.key -pkeyopt rsa_keygen_bits:2048
+
+    #inform only attribute CN and keep other empty
+    openssl req -new -key client.key -out client.csr
+
+    You are about to be asked to enter information that will be incorporated
+    into your certificate request.
+    What you are about to enter is what is called a Distinguished Name or a DN.
+    There are quite a few fields but you can leave some blank
+    For some fields there will be a default value,
+    If you enter '.', the field will be left blank.
+    -----
+    Country Name (2 letter code) [AU]:.
+    State or Province Name (full name) [Some-State]:.
+    Locality Name (eg, city) []:.
+    Organization Name (eg, company) [Internet Widgits Pty Ltd]:.
+    Organizational Unit Name (eg, section) []:.
+    Common Name (e.g. server FQDN or YOUR name) []:ClienteA
+    Email Address []:.
+
+    Please enter the following 'extra' attributes
+    to be sent with your certificate request
+    A challenge password []:
+    An optional company name []:
+
+  ```  
+
+Onde:
+  - client.key: Arquivo da chave privada do Cliente
+  - client.csr: Arquivo CSR (Certified Signing Request) do Cliente
+
+>Importante: preenchemos somente o atributo **CN** do certificado.
+
+
+Vamos precisar acessar a console Web da OCI, acessando Certificates, Certificate Authorities,  clicar na CA criada anteriormente e depois vamos em Certificates para clicar no botão "Issue Certificate":
+
+![CA Issue Certificate](images/22_CA_ClientCertificate01.png "CA Issue Certificate")
+
+Basic Information:
+
+![basic information](images/23_CertificateCreation-step01.png "basic information")
+
+Subject Information (only click next):
+
+![subject information](images/24_CertificateCreation-step02.png "subject information")
+
+Certificate Configuration, nesta estapa, será necessário fazer o upload do arquivo CSR (client.csr):
+
+![certificate information](images/25_CertificateCreation-step03.png "certificate information")
+
+Rules (only click next):
+
+![rules information](images/26_CertificateCreation-step04.png "rules information")
+
+Summary, check your information and click button "Create Certificate":
+
+![summary](images/27_CertificateCreation-step05.png "summary")
 
 # Tasks
 
