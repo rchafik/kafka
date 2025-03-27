@@ -1033,6 +1033,15 @@ Configure ACL do Kafka com o **super user** conforme o subject utilizado no cert
   subject=CN = ClienteA
   ```    
 
+# Kafka Connect
+
+Testes com banco de dados ATP utilizando Wallet:
+  - [JDBC Trouble Shooting Tips for Oracle Autonomous Database (ATP and ADW)](https://www.oracle.com/database/technologies/application-development/jdbc-eecloud-troubleshooting-tips.html)
+  - [JDBC Thin Connections with a Wallet (mTLS)](https://docs.oracle.com/en/cloud/paas/autonomous-database/serverless/adbsb/connect-jdbc-thin-wallet.html)
+  - [JJDBC Connector (Source and Sink)]( https://www.confluent.io/hub/confluentinc/kafka-connect-jdbc)
+ 
+
+
 # Tasks
 
 - **Geral**
