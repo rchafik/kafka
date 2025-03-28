@@ -1033,14 +1033,90 @@ Configure ACL do Kafka com o **super user** conforme o subject utilizado no cert
   subject=CN = ClienteA
   ```    
 
-# Kafka Connect
+# Kafka Connect 
+  > **ATENÇÃO**: Ainda não suportado em nosso produto, mas consta em RoadMap
+
+**Banco de Dados Automous com Mutual TLS (mTLS) authentication required**
+
+Para iniciar o cenário, devemos ter um banco de dados provisionado, e como mencionado, e o atributo **Mutual TLS (mTLS) authentication** definido obrigatório.
+Faça download da sua Wallet, pois ela será utilizada para conexão com o banco.
+
+Aplique o script [00_script_banco_dados.sql](./sql/00_script_banco_dados.sql) em seu banco dados, para:
+  - criar usuário;
+  - criar tabela;
+  - popular a tabela com alguns registros de exemplo.
+
+Preparação da sua VM:
+  - binário do kafka instalado, pois será nesta VM que executaremos o Kafka Connect;
+  - acesso ao Kafka Cluster;
+  - acesso ao seu banco de dados Oracle que foi provisionado;
+  - Wallet do Banco de Dados
+    - crie uma pasta para sua Wallet do banco de dados, por exemplo, **/home/opc/wallet**;
+    - coloque todo o conteúdo da Wallet descompactado nesta pasta;
+    - altere o arquivo **ojdbc.properties** para incluir a senha para os arquivos JKS que você escolheu ao fazer o processo de download da Wallet;
+    - altere o arquivo **sqlnet.ora** para que ele fique com o path completo do local que constam todos os arquivos da Wallet:
+      ```
+      WALLET_LOCATION = (SOURCE = (METHOD = file) (METHOD_DATA = (DIRECTORY="/home/opc/wallet")))
+      ```
+  - faça download do **JDBC Connector (Source and Sink)**, escolha a opção Self-Hosted;
+    - copie todas as bibliotecas que constam na pasta lib deste download, e as coloque na pasta lib do binário do kafka instalado em sua VM.
+  
+    >**Atenção**: Os arquivos Jars com os drivers de banco de dados Oracle e os arquivos para Wallet e seus arquivos JKS (oraclepki.jar, osdt_core.jar, and osdt_cert.jar) já constam neste arquivo do confluent que foi feito download.
+  
+    >Para verificar sua conectividade entre sua VM e o banco de dados, criamos a classe [OracleTest](./src/main/java/com/oracle/util/OracleTest.java)
+
+Preparando o arquivo **connect-standalone.properties** :
+
+  ```
+  bootstrap.servers=bootstrap-xxx.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092
+  security.protocol=SASL_SSL
+  sasl.mechanism=SCRAM-SHA-512
+  ssl.truststore.location=/home/opc/kafka/truststore.jks
+  ssl.truststore.password=ateam
+  sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="super-user" password="senha";
+
+  key.converter=org.apache.kafka.connect.json.JsonConverter
+  value.converter=org.apache.kafka.connect.json.JsonConverter
+  key.converter.schemas.enable=true
+  value.converter.schemas.enable=true
+
+  offset.storage.file.filename=/tmp/connect.offsets
+  offset.flush.interval.ms=10000
+  ```
+
+Preparando o arquivo **custom-oracle.properties** :
+    ```
+    name=oracle-source-connector
+    connector.class=io.confluent.connect.jdbc.JdbcSourceConnector
+    tasks.max=1
+
+    #JDBC Setup
+    connection.url=jdbc:oracle:thin:@chafik_high?TNS_ADMIN=/home/opc/labKafkaConnector/database/wallet
+    connection.user=kafkademo
+    connection.password=ateamKafka#123
+    connection.driver.class=oracle.jdbc.OracleDriver
+    dialect.name=OracleDatabaseDialect
+    connection.oracle.jdbc.ReadTimeout=45000
+
+    #Configuração do Modo de Ingestão
+    mode=incrementing
+    incrementing.column.name=ID
+
+    #Configuração das Tabelas e Tópicos
+    topic.prefix=demo-kafka-
+    table.whitelist=TESTE
+
+    # Intervalo de Polling
+    poll.interval.ms=5000
+    ```
+
 
 Testes com banco de dados ATP utilizando Wallet:
   - [JDBC Trouble Shooting Tips for Oracle Autonomous Database (ATP and ADW)](https://www.oracle.com/database/technologies/application-development/jdbc-eecloud-troubleshooting-tips.html)
   - [JDBC Thin Connections with a Wallet (mTLS)](https://docs.oracle.com/en/cloud/paas/autonomous-database/serverless/adbsb/connect-jdbc-thin-wallet.html)
-  - [JJDBC Connector (Source and Sink)]( https://www.confluent.io/hub/confluentinc/kafka-connect-jdbc)
+  - [JDBC Connector (Source and Sink)](https://www.confluent.io/hub/confluentinc/kafka-connect-jdbc)
+  - [Using Kafka Connect With Oracle Streaming Service And Autonomous DB](https://blogs.oracle.com/developers/post/using-kafka-connect-with-oracle-streaming-service-and-autonomous-db)
  
-
 
 # Tasks
 
