@@ -1064,7 +1064,7 @@ Preparação da sua VM:
   - faça download do **JDBC Connector (Source and Sink)**, escolha a opção Self-Hosted;
     - copie todas as bibliotecas que constam na pasta lib deste download, e as coloque na pasta lib do binário do kafka instalado em sua VM.
   
-    >**Atenção**: Os arquivos Jars com os drivers de banco de dados Oracle e os arquivos para Wallet e seus arquivos JKS (oraclepki.jar, osdt_core.jar, and osdt_cert.jar) já constam neste arquivo do confluent que foi feito download.
+    >**Atenção**: Os arquivos Jars com os drivers de banco de dados Oracle, os arquivos para Wallet e seus arquivos JKS (oraclepki.jar, osdt_core.jar, and osdt_cert.jar) já constam neste arquivo do confluent que foi feito download.
   
     >Para verificar sua conectividade entre sua VM e o banco de dados, criamos a classe [OracleTest](./src/main/java/com/oracle/util/OracleTest.java)
 
@@ -1179,7 +1179,7 @@ Execute a subida do conector via API:
     curl -iX POST -H "Accept:application/json" -H "Content-Type:application/json" -d @atp-source.json http://localhost:8083/connectors
    ```
 
-Insira alguns registros em sua tabela e acompanhe consumindo as filas do tópico: **demo-kafka-TESTE**
+Insira alguns registros em sua tabela e acompanhe consumindo as mensagens do tópico: **demo-kafka-TESTE**
 
 Referências:
   - [JDBC Trouble Shooting Tips for Oracle Autonomous Database (ATP and ADW)](https://www.oracle.com/database/technologies/application-development/jdbc-eecloud-troubleshooting-tips.html)
