@@ -1034,17 +1034,20 @@ Configure ACL do Kafka com o **super user** conforme o subject utilizado no cert
   ```    
 
 # Kafka Connect 
-  > **ATENÇÃO**: Ainda não suportado em nosso produto, mas consta em RoadMap
+
+Neste cenário vamos utilizar o Kafka Connect para extrair informações de um Banco de Dados Oracle quando os dados forem inseridos numa tabela e postar num tópico.
 
 **Banco de Dados Automous com Mutual TLS (mTLS) authentication required**
 
-Para iniciar o cenário, devemos ter um banco de dados provisionado, e como mencionado, e o atributo **Mutual TLS (mTLS) authentication** definido obrigatório.
+Para iniciar o cenário, devemos ter um banco de dados provisionado, e como mencionado, o atributo **Mutual TLS (mTLS) authentication** definido obrigatório.
 Faça download da sua Wallet, pois ela será utilizada para conexão com o banco.
 
 Aplique o script [00_script_banco_dados.sql](./sql/00_script_banco_dados.sql) em seu banco dados, para:
   - criar usuário;
   - criar tabela;
   - popular a tabela com alguns registros de exemplo.
+
+**Virtual Machine com Oracle Linux 8.9**
 
 Preparação da sua VM:
   - binário do kafka instalado, pois será nesta VM que executaremos o Kafka Connect;
@@ -1065,57 +1068,126 @@ Preparação da sua VM:
   
     >Para verificar sua conectividade entre sua VM e o banco de dados, criamos a classe [OracleTest](./src/main/java/com/oracle/util/OracleTest.java)
 
-Preparando o arquivo **connect-standalone.properties** :
+**Execução do Kafka Connect**
+
+Preparando o arquivo **connect-distributed.properties** com os dados do kafka cluster e seus itens de segurança:
 
   ```
-  bootstrap.servers=bootstrap-xxx.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092
-  security.protocol=SASL_SSL
-  sasl.mechanism=SCRAM-SHA-512
-  ssl.truststore.location=/home/opc/kafka/truststore.jks
-  ssl.truststore.password=ateam
-  sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="super-user" password="senha";
+      #your default information
+      bootstrap.servers=bootstrap-clstr-xxx.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092
+      security.protocol=SASL_SSL
+      sasl.mechanism=SCRAM-SHA-512
+      ssl.truststore.location=/home/opc/kafka/truststore.jks
+      ssl.truststore.password=ateam
+      sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="super-user" password="senha";
 
-  key.converter=org.apache.kafka.connect.json.JsonConverter
-  value.converter=org.apache.kafka.connect.json.JsonConverter
-  key.converter.schemas.enable=true
-  value.converter.schemas.enable=true
+      #producer
+      producer.security.protocol=SASL_SSL
+      producer.sasl.mechanism=SCRAM-SHA-512
+      producer.ssl.truststore.location=/home/opc/kafka/truststore.jks
+      producer.ssl.truststore.password=ateam
+      producer.sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="super-user" password="senha";
 
-  offset.storage.file.filename=/tmp/connect.offsets
-  offset.flush.interval.ms=10000
+      #consumer
+      consumer.security.protocol=SASL_SSL
+      consumer.sasl.mechanism=SCRAM-SHA-512
+      consumer.ssl.truststore.location=/home/opc/kafka/truststore.jks
+      consumer.ssl.truststore.password=ateam
+      consumer.sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="super-user" password="senha";
+
+      # unique name for the cluster, used in forming the Connect cluster group. Note that this must not conflict with consumer group IDs
+      group.id=connect-cluster
+
+      # The converters specify the format of data in Kafka and how to translate it into Connect data. Every Connect user will
+      # need to configure these based on the format they want their data in when loaded from or stored into Kafka
+      key.converter=org.apache.kafka.connect.json.JsonConverter
+      value.converter=org.apache.kafka.connect.json.JsonConverter
+      # Converter-specific settings can be passed in by prefixing the Converter's setting with the converter we want to apply
+      # it to
+      key.converter.schemas.enable=false
+      value.converter.schemas.enable=false
+
+      # Topic to use for storing offsets. This topic should have many partitions and be replicated and compacted.
+      # Kafka Connect will attempt to create the topic automatically when needed, but you can always manually create
+      # the topic before starting Kafka Connect if a specific topic configuration is needed.
+      # Most users will want to use the built-in default replication factor of 3 or in some cases even specify a larger value.
+      # Since this means there must be at least as many brokers as the maximum replication factor used, we'd like to be able
+      # to run this example on a single-broker cluster and so here we instead set the replication factor to 1.
+      offset.storage.topic=connect-offsets
+      offset.storage.replication.factor=1
+      #offset.storage.partitions=25
+
+      # Topic to use for storing connector and task configurations; note that this should be a single partition, highly replicated,
+      # and compacted topic. Kafka Connect will attempt to create the topic automatically when needed, but you can always manually create
+      # the topic before starting Kafka Connect if a specific topic configuration is needed.
+      # Most users will want to use the built-in default replication factor of 3 or in some cases even specify a larger value.
+      # Since this means there must be at least as many brokers as the maximum replication factor used, we'd like to be able
+      # to run this example on a single-broker cluster and so here we instead set the replication factor to 1.
+      config.storage.topic=connect-configs
+      config.storage.replication.factor=1
+
+      # Topic to use for storing statuses. This topic can have multiple partitions and should be replicated and compacted.
+      # Kafka Connect will attempt to create the topic automatically when needed, but you can always manually create
+      # the topic before starting Kafka Connect if a specific topic configuration is needed.
+      # Most users will want to use the built-in default replication factor of 3 or in some cases even specify a larger value.
+      # Since this means there must be at least as many brokers as the maximum replication factor used, we'd like to be able
+      # to run this example on a single-broker cluster and so here we instead set the replication factor to 1.
+      status.storage.topic=connect-status
+      status.storage.replication.factor=1
+      #status.storage.partitions=5
+
+      # Flush much faster than normal, which is useful for testing/debugging
+      offset.flush.interval.ms=10000
+
   ```
 
-Preparando o arquivo **custom-oracle.properties** :
-    ```
-    name=oracle-source-connector
-    connector.class=io.confluent.connect.jdbc.JdbcSourceConnector
-    tasks.max=1
-
-    #JDBC Setup
-    connection.url=jdbc:oracle:thin:@chafik_high?TNS_ADMIN=/home/opc/labKafkaConnector/database/wallet
-    connection.user=kafkademo
-    connection.password=ateamKafka#123
-    connection.driver.class=oracle.jdbc.OracleDriver
-    dialect.name=OracleDatabaseDialect
-    connection.oracle.jdbc.ReadTimeout=45000
-
-    #Configuração do Modo de Ingestão
-    mode=incrementing
-    incrementing.column.name=ID
-
-    #Configuração das Tabelas e Tópicos
-    topic.prefix=demo-kafka-
-    table.whitelist=TESTE
-
-    # Intervalo de Polling
-    poll.interval.ms=5000
-    ```
+  >Atenção: Para ambientes produtivos recomendação é que todos os atributos **replication.factor=3**
 
 
-Testes com banco de dados ATP utilizando Wallet:
+Inicie o ambiente com o arquivo de propriedades do kafka cluster, vamos usar o modo **distributed** do kafka:
+
+   ```
+    connect-distributed.sh connect-distributed.properties
+   ```
+
+Prepare o arquivo **atp-source.json** com as seguintes informações, pois vamos usá-lo para deploy do connector no kafka via API:
+
+   ```
+    {
+      "name": "atp-source",
+      "config": {
+        "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
+        "tasks.max": "100",
+        "connection.url": "jdbc:oracle:thin:@ServiceNameFromTnsNamesOra?TNS_ADMIN=/home/opc/wallet",
+        "connection.user": "kafkademo",
+        "connection.password": "ateamKafka#123",
+        "connection.oracle.jdbc.ReadTimeout": "45000",
+        "mode": "incrementing",
+        "incrementing.column.name": "ID",
+        "topic.prefix": "demo-kafka-",
+        "table.whitelist": "TESTE",
+        "numeric.mapping": "best_fit"
+      }
+    }
+   ```
+
+  >Atenção: Na propriedade **connection.url** devemos utilizar o path onde estão os arquivos descompactados da Wallet.
+
+Execute a subida do conector via API:
+
+   ```
+    curl -iX POST -H "Accept:application/json" -H "Content-Type:application/json" -d @atp-source.json http://localhost:8083/connectors
+   ```
+
+Insira alguns registros em sua tabela e acompanhe consumindo as filas do tópico: **demo-kafka-TESTE**
+
+Referências:
   - [JDBC Trouble Shooting Tips for Oracle Autonomous Database (ATP and ADW)](https://www.oracle.com/database/technologies/application-development/jdbc-eecloud-troubleshooting-tips.html)
   - [JDBC Thin Connections with a Wallet (mTLS)](https://docs.oracle.com/en/cloud/paas/autonomous-database/serverless/adbsb/connect-jdbc-thin-wallet.html)
   - [JDBC Connector (Source and Sink)](https://www.confluent.io/hub/confluentinc/kafka-connect-jdbc)
   - [Using Kafka Connect With Oracle Streaming Service And Autonomous DB](https://blogs.oracle.com/developers/post/using-kafka-connect-with-oracle-streaming-service-and-autonomous-db)
+  - [Apache Kafka Quickstart](https://kafka.apache.org/quickstart)
+  - [Kafka Connect REST Interface](https://docs.confluent.io/platform/current/connect/references/restapi.html)
  
 
 # Tasks
