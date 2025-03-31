@@ -1070,6 +1070,8 @@ Preparação da sua VM:
 
 **Execução do Kafka Connect**
 
+Lembrando que esse cenário é inserir um registro no banco de dados (Source) e essa informação chegar num tópico (Sink).
+
 Preparando o arquivo **connect-distributed.properties** com os dados do kafka cluster e seus itens de segurança:
 
   ```
@@ -1180,6 +1182,162 @@ Execute a subida do conector via API:
    ```
 
 Insira alguns registros em sua tabela e acompanhe consumindo as mensagens do tópico: **demo-kafka-TESTE**
+
+**Cenário Banco de Dados como Sinc**
+
+Agora vamos inverter e desta vez, uma mensagem postada em um tópico deverá ser gravado no banco de dados.
+
+Preparando o arquivo **connect-distributed.properties** com os dados do kafka cluster e seus itens de segurança:
+
+  ```
+  # default information
+  bootstrap.servers=bootstrap-clstr-xxx.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092
+  security.protocol=SASL_SSL
+  sasl.mechanism=SCRAM-SHA-512
+  ssl.truststore.location=/home/opc/kafka/truststore.jks
+  ssl.truststore.password=ateam
+  sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="super-user" password="senha";
+
+  #producer
+  producer.security.protocol=SASL_SSL
+  producer.sasl.mechanism=SCRAM-SHA-512
+  producer.ssl.truststore.location=/home/opc/kafka/truststore.jks
+  producer.ssl.truststore.password=ateam
+  producer.sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="super-user" password="senha";
+
+  #consumer
+  consumer.security.protocol=SASL_SSL
+  consumer.sasl.mechanism=SCRAM-SHA-512
+  consumer.ssl.truststore.location=/home/opc/kafka/truststore.jks
+  consumer.ssl.truststore.password=ateam
+  consumer.sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="super-user";
+
+  # unique name for the cluster, used in forming the Connect cluster group. Note that this must not conflict with consumer group IDs
+  group.id=connect-cluster
+
+  # The converters specify the format of data in Kafka and how to translate it into Connect data. Every Connect user will
+  # need to configure these based on the format they want their data in when loaded from or stored into Kafka
+  key.converter=org.apache.kafka.connect.json.JsonConverter
+  value.converter=org.apache.kafka.connect.json.JsonConverter
+  # Converter-specific settings can be passed in by prefixing the Converter's setting with the converter we want to apply
+  # it to
+  key.converter.schemas.enable=true
+  value.converter.schemas.enable=true
+
+  # Topic to use for storing offsets. This topic should have many partitions and be replicated and compacted.
+  # Kafka Connect will attempt to create the topic automatically when needed, but you can always manually create
+  # the topic before starting Kafka Connect if a specific topic configuration is needed.
+  # Most users will want to use the built-in default replication factor of 3 or in some cases even specify a larger value.
+  # Since this means there must be at least as many brokers as the maximum replication factor used, we'd like to be able
+  # to run this example on a single-broker cluster and so here we instead set the replication factor to 1.
+  offset.storage.topic=connect-offsets
+  offset.storage.replication.factor=1
+  #offset.storage.partitions=25
+
+  # Topic to use for storing connector and task configurations; note that this should be a single partition, highly replicated,
+  # and compacted topic. Kafka Connect will attempt to create the topic automatically when needed, but you can always manually create
+  # the topic before starting Kafka Connect if a specific topic configuration is needed.
+  # Most users will want to use the built-in default replication factor of 3 or in some cases even specify a larger value.
+  # Since this means there must be at least as many brokers as the maximum replication factor used, we'd like to be able
+  # to run this example on a single-broker cluster and so here we instead set the replication factor to 1.
+  config.storage.topic=connect-configs
+  config.storage.replication.factor=1
+
+  # Topic to use for storing statuses. This topic can have multiple partitions and should be replicated and compacted.
+  # Kafka Connect will attempt to create the topic automatically when needed, but you can always manually create
+  # the topic before starting Kafka Connect if a specific topic configuration is needed.
+  # Most users will want to use the built-in default replication factor of 3 or in some cases even specify a larger value.
+  # Since this means there must be at least as many brokers as the maximum replication factor used, we'd like to be able
+  # to run this example on a single-broker cluster and so here we instead set the replication factor to 1.
+  status.storage.topic=connect-status
+  status.storage.replication.factor=1
+  #status.storage.partitions=5
+
+  # Flush much faster than normal, which is useful for testing/debugging
+  offset.flush.interval.ms=10000
+
+  ```
+
+  >Atenção: 
+  > - Para ambientes produtivos recomendação é que todos os atributos **replication.factor=3**
+  > - Os atributos **key.converter.schemas.enable** e **value.converter.schemas.enable** estão habilitados para esse cenário.
+
+Inicie o ambiente com o arquivo de propriedades do kafka cluster, vamos usar o modo **distributed** do kafka:
+
+   ```
+    connect-distributed.sh connect-distributed.properties
+   ```
+
+Prepare o arquivo **atp-sink.json** com as seguintes informações, pois vamos usá-lo para deploy do connector no kafka via API:
+
+   ```
+    {
+      "name": "atp-sink",
+      "config": {
+        "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
+        "tasks.max": "100",
+        "connection.url": "jdbc:oracle:thin:@ServiceNameFromTnsNamesOra?TNS_ADMIN=/home/opc/wallet",
+        "connection.user": "kafkademo",
+        "connection.password": "ateamKafka#123",
+        "connection.oracle.jdbc.ReadTimeout": "45000",
+        "connection.driver.class": "oracle.jdbc.OracleDriver",
+        "topics": "topicSourceKafka",
+        "table.name.format": "ALUNO",
+        "auto.create": true,
+        "auto.evolve": true,
+        "insert.mode": "upsert",
+        "pk.fields": "ID",
+        "pk.mode": "record_value",
+        "fields.whitelist": "ID,NAME",
+        "delete.enabled": false
+      }
+    }
+   ```
+
+  >Atenção: Na propriedade **connection.url** devemos utilizar o path onde estão os arquivos descompactados da Wallet.
+
+Execute a subida do conector via API:
+
+   ```
+    curl -iX POST -H "Accept:application/json" -H "Content-Type:application/json" -d @atp-sinc.json http://localhost:8083/connectors
+   ```  
+
+Para realizar um teste, devemos postar uma mensagem no seguinte forma no tópico **topicSourceKafka**.
+
+Arquivo **sampleMessage.json**: 
+
+   ```
+      {
+          "schema": {
+              "type": "struct",
+              "fields": [{
+                      "field": "ID",
+                      "type": "int32"
+                  }, {
+                      "field": "NAME",
+                      "type": "string"
+                  }
+              ]
+          },
+          "payload": {
+              "ID": 1,
+              "NAME": "Alice"
+          }
+      }
+
+   ```
+
+>**Atenção**: 
+> - Para postar a mensagem no tópico, devemos informar os atributos **schema** e **payload** na mensagem.
+
+
+Durante a postagem, é importante que a mensagem esteja numa única linha, podemos usar algo como:
+
+   ```
+    cat sampleMessage.json | tr -d '\n' | kafka-console-producer.sh --broker-list bootstrap-clstr-xxx.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 --topic topicSourceKafka --producer.config kafkaclient.properties
+   ```
+
+Publique algumas mensagens no tópico seguindo esse formato e faça consultas na tabela **ALUNO** em seu banco de dados.
 
 Referências:
   - [JDBC Trouble Shooting Tips for Oracle Autonomous Database (ATP and ADW)](https://www.oracle.com/database/technologies/application-development/jdbc-eecloud-troubleshooting-tips.html)
