@@ -1347,6 +1347,94 @@ Referências:
   - [Apache Kafka Quickstart](https://kafka.apache.org/quickstart)
   - [Kafka Connect REST Interface](https://docs.confluent.io/platform/current/connect/references/restapi.html)
  
+# Performance Tests
+
+Realizamos a instalação do K6 juntamente com a extensão do kafka para realizar os testes de performance.
+
+Utilizei o script [test_sasl_auth.js](./k6/test_sasl_auth.js), fazendo as alterações necessárias para se conectar em nosso ambiente Kafka:
+  - importar o algoritmo **SASL_SCRAM_SHA512**;
+  - configurar o atributo **brokers** com os dados do ambiente Kafka utilizando o protocolo SASL-SCRAM;
+  - dentro de **saslConfig**, informe o super user e a senha, para estabelecer a conexão, e o **algorithm**=SASL_SCRAM_SHA512;
+  - em **tlsConfig**: 
+    - atributos enableTls e insecureSkipTlsVerify devem estar como true;
+    - informar a cadeia de certificados do cliente e da CA, conforme abaixo:
+
+        ```
+          clientCertPem: "/home/opc/kafka/leaf.crt", //certificado do cliente que foi assinado pela CA
+          clientKeyPem: "/home/opc/kafka/leaf.key", //chave utilizada para gerar o certificado do cliente
+          serverCaPem: "/home/opc/kafka/rootCA.pem", //certificado da CA
+        ```
+
+Comando para executar o k6:
+  >Importante: lembrar que a instalação compilada com a extensão do kafka gera um novo binário
+
+```
+  ./k6 run --vus 50 --duration 60s test_sasl_auth.js --out influxdb=http://localhost:8086/k6
+```
+
+Resultado:
+
+```
+     ✓ 10 messages returned
+     ✓ key is correct
+     ✓ value is correct
+
+     █ teardown
+
+     checks.........................: 100.00% ✓ 7890        ✗ 0
+     data_received..................: 0 B     0 B/s
+     data_sent......................: 0 B     0 B/s
+     iteration_duration.............: avg=1.15s    min=10.97ms med=1.18s   max=2.62s    p(90)=2.02s   p(95)=2.19s
+     iterations.....................: 2630    43.165329/s
+     kafka_reader_dial_count........: 50      0.820634/s
+     kafka_reader_dial_seconds......: avg=13.62ms  min=0s      med=0s      max=902.85ms p(90)=0s      p(95)=0s
+     kafka_reader_error_count.......: 0       0/s
+     kafka_reader_fetch_bytes.......: 0 B     0 B/s
+     kafka_reader_fetch_bytes_max...: 1000000 min=1000000   max=1000000
+     kafka_reader_fetch_bytes_min...: 1       min=1         max=1
+     kafka_reader_fetch_size........: 0       0/s
+     kafka_reader_fetch_wait_max....: 10s     min=10s       max=10s
+     kafka_reader_fetches_count.....: 50      0.820634/s
+     kafka_reader_lag...............: 6833    min=4510      max=523826
+     kafka_reader_message_bytes.....: 1.6 MB  27 kB/s
+     kafka_reader_message_count.....: 30850   506.330946/s
+     kafka_reader_offset............: 610     min=101       max=920
+     kafka_reader_queue_capacity....: 100     min=100       max=100
+     kafka_reader_queue_length......: 91      min=91        max=92
+     kafka_reader_read_seconds......: avg=0s       min=0s      med=0s      max=0s       p(90)=0s      p(95)=0s
+     kafka_reader_rebalance_count...: 0       0/s
+     kafka_reader_timeouts_count....: 0       0/s
+     kafka_reader_wait_seconds......: avg=1.75ms   min=0s      med=0s      max=154.85ms p(90)=0s      p(95)=0s
+     kafka_writer_acks_required.....: 0       min=0         max=0
+     kafka_writer_async.............: 0.00%   ✓ 0           ✗ 263000
+     kafka_writer_attempts_max......: 0       min=0         max=0
+     kafka_writer_batch_bytes.......: 20 MB   328 kB/s
+     kafka_writer_batch_max.........: 1       min=1         max=1
+     kafka_writer_batch_size........: 263000  4316.532858/s
+     kafka_writer_batch_timeout.....: 0s      min=0s        max=0s
+     kafka_writer_error_count.......: 0       0/s
+     kafka_writer_message_bytes.....: 40 MB   655 kB/s
+     kafka_writer_message_count.....: 526000  8633.065716/s
+     kafka_writer_read_timeout......: 0s      min=0s        max=0s
+     kafka_writer_retries_count.....: 0       0/s
+     kafka_writer_wait_seconds......: avg=0s       min=0s      med=0s      max=0s       p(90)=0s      p(95)=0s
+     kafka_writer_write_count.......: 526000  8633.065716/s
+     kafka_writer_write_seconds.....: avg=171.29µs min=9.96µs  med=55.57µs max=593.34ms p(90)=89.35µs p(95)=115.5µs
+     kafka_writer_write_timeout.....: 0s      min=0s        max=0s
+     vus............................: 50      min=0         max=50
+     vus_max........................: 50      min=48        max=50
+
+
+running (1m00.9s), 00/50 VUs, 2630 complete and 0 interrupted iterations
+default ✓ [======================================] 50 VUs  1m0s
+
+```
+
+Referências:
+  - [Grafana k6](https://grafana.com/docs/k6/latest/)
+  - [xk6-kafka](https://github.com/mostafa/xk6-kafka)
+  - [Get started with InfluxDB](https://docs.influxdata.com/influxdb/v2/get-started/)
+
 
 # Tasks
 
