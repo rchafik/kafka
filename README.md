@@ -1369,7 +1369,7 @@ Comando para executar o k6:
   >Importante: lembrar que a instalação compilada com a extensão do kafka gera um novo binário
 
 ```
-  ./k6 run --vus 50 --duration 60s test_sasl_auth.js --out influxdb=http://localhost:8086/k6
+  K6_INFLUXDB_PUSH_INTERVAL=2s ./k6 run --vus 50 --duration 60s test_sasl_auth.js --out influxdb=http://localhost:8086/k6
 ```
 
 Resultado:
