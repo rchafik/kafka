@@ -1440,6 +1440,7 @@ Referências:
   - [Grafana k6](https://grafana.com/docs/k6/latest/)
   - [xk6-kafka](https://github.com/mostafa/xk6-kafka)
   - [Get started with InfluxDB](https://docs.influxdata.com/influxdb/v2/get-started/)
+  - [What is Apache Kafka and how to perform performance tests on it (Part 2)](https://medium.com/@gpiechnik/what-is-apache-kafka-and-how-to-perform-performance-tests-on-it-part-2-54177fc6631c)
 
 
 # Tasks
