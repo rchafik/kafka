@@ -1436,6 +1436,27 @@ Importamos o dashboard [xk6-kafka-results.json](https://github.com/gpiechnik2/k6
 
 ![grafana](images/32_GrafanaK6KafkaPerformance.png "grafana")
 
+**Recommandation and Optimization Insights**
+
+      | Variable | Impact on Throughput | Impact on Latency | Impact on Scalability| Primary Use Case
+      |----------------|---------|-------|-------|-------|-------|
+      |nodeCoude| High | Moderate | High | Distribute partitions, increase parallelism
+      |ocpuCount| Moderate | High | Moderate| Reduce latency, handle high traffic loads
+      |storageSizeInGbs| Low | Low | High | Handle more data, increase retention period
+
+**OCPU Count**
+  - Increasing ocpuCount reduces both producer and consumer latency and improves throughput.
+  - Configuration with higher OCPUs is optimal for both low and high payload scenarios.
+
+**Storage Size**
+  - Increasing storageSizeInGbs does not directly impact throughput or latency but supports higher retention and scalability for large workloads.
+
+**Authentication (SASL vs. mTLS)**
+  - SASL: Best for high throughput and low latency.
+  - mTLS: Suitable for environments where security and stability are critical.
+
+>Based on above testing, use nodeCount=3, ocpuCount=8, storageSizeInGbs=500, **SASL** for the best overall performance in terms of throughput and latency.
+
 Referências:
   - [Grafana k6](https://grafana.com/docs/k6/latest/)
   - [xk6-kafka](https://github.com/mostafa/xk6-kafka)
