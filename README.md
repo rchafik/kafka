@@ -1430,6 +1430,12 @@ default ✓ [======================================] 50 VUs  1m0s
 
 ```
 
+Foi possível analisar os dados do teste de performance pelo Grafana. 
+Importamos o dashboard [xk6-kafka-results.json](https://github.com/gpiechnik2/k6-grafana-influxdb-docker-compose/blob/main/dashboards/xk6-kafka-results.json)
+  >Atenção: Foi necessário fazer a substituição do atributo **datasource.uui** (em diversas ocorrências) para o nome do datasource criado para o InfluxDB.
+
+![grafana](images/32_GrafanaK6KafkaPerformance.png "grafana")
+
 Referências:
   - [Grafana k6](https://grafana.com/docs/k6/latest/)
   - [xk6-kafka](https://github.com/mostafa/xk6-kafka)
