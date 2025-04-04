@@ -1438,11 +1438,10 @@ Importamos o dashboard [xk6-kafka-results.json](https://github.com/gpiechnik2/k6
 
 **Recommandation and Optimization Insights**
 
-      | Variable | Impact on Throughput | Impact on Latency | Impact on Scalability| Primary Use Case
-      |----------------|---------|-------|-------|-------|-------|
-      |nodeCoude| High | Moderate | High | Distribute partitions, increase parallelism
-      |ocpuCount| Moderate | High | Moderate| Reduce latency, handle high traffic loads
-      |storageSizeInGbs| Low | Low | High | Handle more data, increase retention period
+      | Variable | Impact on Throughput | Impact on Latency | Impact on Scalability| Primary Use Case|
+      |nodeCoude| High | Moderate | High | Distribute partitions, increase parallelism|
+      |ocpuCount| Moderate | High | Moderate| Reduce latency, handle high traffic loads|
+      |storageSizeInGbs| Low | Low | High | Handle more data, increase retention period|
 
 **OCPU Count**
   - Increasing ocpuCount reduces both producer and consumer latency and improves throughput.
