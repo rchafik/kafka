@@ -2,7 +2,7 @@
 
 **Directory Structure**
 
-    ```
+```
     .
     ├── config (not commited)
     │   ├── kafka-mtls-consumer.properties
@@ -83,8 +83,7 @@
     │               └── oracle
     │                   └── AppTest.java
     └── target
-
-    ```
+```
 
 # Streaming
 
