@@ -28,7 +28,7 @@
 
 ```
     .
-    ├── config (not commited)
+    ├── config (not commited for security reasons)
     │   ├── kafka-mtls-consumer.properties
     │   ├── kafka-mtls-producer.properties
     │   ├── kafka-sasl-ssl-avro-consumer.properties
