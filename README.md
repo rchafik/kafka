@@ -1,5 +1,29 @@
 # Streaming and Managed Kafka
 
+# Summary
+
+- **General**
+  - [x] Remove sensitive content, using properties file
+  - [x] Review best practices, such as storing security artifacts in vault or bucket
+
+- **Streaming**
+  - [x] Streaming Producer and Consumer
+  - [x] After I configured to use more recent versions of the Kafka libraries in the project, it was necessary to define the parameter [enable.idempotence=false] in the properties of the class that produces the messages, because this error was occurring: *org.apache.kafka.common.errors.UnsupportedVersionException: The broker does not support INIT_PRODUCER_ID*
+
+- **Kafka**
+  - [x] SASL-SCRAM Producer and Consumer
+  - [x] mTLS Producer and Consumer
+  - [x] Use Kafka **super user** and setup ACLs (topics, users and permissions between artifacts)
+  - [x] Plug in a graphical interface to manage the environment
+  - [x] Tests with Mirror Maker and how to configure your network to connect different OCI Regions
+  - [x] Schema Registry not yet native, but we can use an open source one (in this case, we use Apicurio). Managed Schema Registry is on the roadmap for FY27.
+  - [x] The use of the Kafka server **FQDN is mandatory** for connection:
+    - This is the error when we try to use the server IP via **mTLS**: *ERROR: [Producer clientId=producer-1] Connection to node -1 (/10.0.1.238:9093) failed authentication due to: SSL handshake failed*
+    - This is the error when we try to use the server IP via **SASL-SSL**: *ERROR: [Producer clientId=producer-1] Connection to node -1 (private-nlb-c1-btaxq3z9d0ziwk0g.sub11252107191.kafkagru.oraclevcn.com/10.0.1.238:9092) failed authentication due to: SSL handshake failed*
+  - [x] Describe security items in more detail, especially about the use of **mTLS** and **Certification Authority** in OCI Services, providing Customer´s certificates signed by Oracle CA (recommended for Production Environments).
+  - [x] Testing with Kafka Connect
+  - [x] Testing and Considerations on Performance
+
 **Directory Structure**
 
 ```
@@ -1554,29 +1578,7 @@ Referências:
   - [What is Apache Kafka and how to perform performance tests on it (Part 2)](https://medium.com/@gpiechnik/what-is-apache-kafka-and-how-to-perform-performance-tests-on-it-part-2-54177fc6631c)
 
 
-# Tasks
 
-- **Geral**
-  - [x] Remover conteúdo sensível, usando arquivo de propriedades
-  - [x] Rever boas práticas, como armazenar os artefatos de segurança em vault ou bucket
-
-- **Streaming**
-  - [x] Produtor e Consumidor Streaming
-  - [x] Depois que configurei para usar versões mais recentes das bibliotecas kafka no projeto, foi necessário definir o parâmetro [enable.idempotence=false] nas propriedades da classe que produz as mensagens, pois estava ocorrendo o erro: *org.apache.kafka.common.errors.UnsupportedVersionException: The broker does not support INIT_PRODUCER_ID*
-
-- **Kafka**
-  - [x] Produtor e Consumidor SASL-SCRAM
-  - [x] Produtor e Consumidor mTLS
-  - [x] Utilizar super user do Kafka e criação de ACL´s (filas, usuários e permissões entre os artefatos)
-  - [x] Plugar uma interface gráfica para administrar o ambiente
-  - [x] Testes com Mirror Maker
-  - [x] Schema Registry ainda não nativo, mas podemos utilizar um open source (neste caso, usamos o Apicurio). Schema Registry gerenciado está no roadmap para FY27.
-  - [x] O uso do FQDN do servidor Kafka é obrigatório para conexão
-    - Esse é o erro quando tentamos utilizar o IP do servidor via mTLS: *ERROR: [Producer clientId=producer-1] Connection to node -1 (/10.0.1.238:9093) failed authentication due to: SSL handshake failed*
-    - Esse é o erro quando tentamos usar o IP do servidor via SASL-SSL: *ERROR: [Producer clientId=producer-1] Connection to node -1 (private-nlb-c1-btaxq3z9d0ziwk0g.sub11252107191.kafkagru.oraclevcn.com/10.0.1.238:9092) failed authentication due to: SSL handshake failed*
-  - [ ] Descrever itens de segurança com mais detalhes, principalmente sobre o uso de mTLS e serviços Oracle OCI como CA (autoridade certificadora para uso privado de certificados), como recomendação para ambientes produtivos
-   - [x] Testes com Kafka Connect
-   - [x] Testes e Considerações sobre Performance
 
 
 ## Acknowledgments
