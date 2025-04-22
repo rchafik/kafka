@@ -1,3 +1,88 @@
+# Streaming and Managed Kafka
+
+**Directory Structure**
+.
+├── config (not commited)
+│   ├── kafka-mtls-consumer.properties
+│   ├── kafka-mtls-producer.properties
+│   ├── kafka-sasl-ssl-avro-consumer.properties
+│   ├── kafka-sasl-ssl-avro-producer.properties
+│   ├── kafka-sasl-ssl-consumer.properties
+│   ├── kafka-sasl-ssl-producer.properties
+│   ├── streaming-consumer.properties
+│   └── streaming-producer.properties
+├── docs
+│   └── Parte 2 - Highly Protected Architecture with mTLS + LB + WAF + API GW + JWT.pdf
+├── images
+│   ├── 00_KafkaMirrorMakerSetup.png
+│   ├── 00_ManagedKafka.png
+│   ├── 01_endpointsGRU.png
+│   ├── 02_ruleGRU.png
+│   ├── 03_endpointsVCP.png
+│   ├── 04_ruleVCP.png
+│   ├── 05_routeTableGRU.png
+│   ├── 06_routeTableVCP.png
+│   ├── 07_securityListGRU.png
+│   ├── 08_securityListVCP.png
+│   ├── 09_apicurioUI.png
+│   ├── 10_schemaRegistryAvroDetail.png
+│   ├── 11_CAmTLSandCertificates.png
+│   ├── 12_Fluxo_mTSL_with_OCI_CertitificateAuthority.png
+│   ├── 13_CreatingMasterKeyCopyPublicWrappingKey.png
+│   ├── 14_CreatingMasterKeyPart01.png
+│   ├── 15_CreatingMasterKeyPart02.png
+│   ├── 16_CreatingCA_step01.png
+│   ├── 17_CreatingCA-step02.png
+│   ├── 18_CreatingCA-step03.png
+│   ├── 19_CreatingCA-step04.png
+│   ├── 20_CreatingCA-step05.png
+│   ├── 21_CreatingCA-step06.png
+│   ├── 22_CA_ClientCertificate01.png
+│   ├── 23_CertificateCreation-step01.png
+│   ├── 24_CertificateCreation-step02.png
+│   ├── 25_CertificateCreation-step03.png
+│   ├── 26_CertificateCreation-step04.png
+│   ├── 27_CertificateCreation-step05.png
+│   ├── 28_CA_CertificateViewContent.png
+│   ├── 29_CA_CertificateDonwload.png
+│   ├── 30_ClientCertificateViewContent.png
+│   ├── 31_ClienteCertificateDownload.png
+│   └── 32_GrafanaK6KafkaPerformance.png
+├── k6
+│   └── test_sasl_auth.js
+├── pom.xml
+├── README.md
+├── sql
+│   └── 00_script_banco_dados.sql
+├── src
+│   ├── main
+│   │   ├── avro
+│   │   │   └── user.avsc
+│   │   └── java
+│   │       └── com
+│   │           └── oracle
+│   │               ├── avro
+│   │               │   └── User.java
+│   │               ├── KafkaMtlsConsumer.java
+│   │               ├── KafkaMtlsProducer.java
+│   │               ├── KafkaSASL_SSL_AvroConsumer.java
+│   │               ├── KafkaSASL_SSL_AvroProducer.java
+│   │               ├── KafkaSASL_SSLConsumer.java
+│   │               ├── KafkaSASL_SSLProducer.java
+│   │               ├── StreamingConsumer.java
+│   │               ├── StreamingProducer.java
+│   │               └── util
+│   │                   ├── Environments.java
+│   │                   ├── OracleTest.java
+│   │                   └── PropertiesUtil.java
+│   └── test
+│       └── java
+│           └── com
+│               └── oracle
+│                   └── AppTest.java
+└── target
+
+
 # Streaming
 
 **Exemplos em Java para consumir e produzir mensagens com Streaming:**
