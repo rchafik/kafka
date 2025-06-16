@@ -1579,7 +1579,34 @@ Referências:
 
 
 
+# Testes com Python
 
+Criamos alguns exemplos com python para produzir e consumir as mensagens.
+
+Utilizamos as seguintes versões em nosso teste:
+  - Python 3.12.10
+  - pip 25.1.1
+  - confluent-kafka 2.10.1
+
+>Importante observar, que o arquivo de configurações entre python e java são diferentes, pois para python não há o atributo **sasl.jaas.config** (utilizado em códigos Java nos exemplos anteriores). devemos informar usuário e o token, em atributos distintos, usando **sasl.username** e **sasl.password**.
+
+Veja o arquivo **streaming-python-consumer.properties** de exemplo:
+
+  ```
+    bootstrap.servers=cell-1.streaming.sa-saopaulo-1.oci.oraclecloud.com:9092
+    group.id=my-group-consumer-id
+    security.protocol=SASL_SSL
+    sasl.mechanism=PLAIN
+    fetch.min.bytes=20971520
+    fetch.max.bytes=52428800
+    enable.auto.commit=false
+    sasl.username=tenancy/domain/user/ocid1.streampool.oc1.sa-saopaulo-1.xxx
+    sasl.password=auth_token
+    fetch.wait.max.ms=50
+    auto.offset.reset=earliest
+    session.timeout.ms=6000
+    heartbeat.interval.ms=5000
+  ```
 
 ## Acknowledgments
 
