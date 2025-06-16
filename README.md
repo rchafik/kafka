@@ -1588,7 +1588,8 @@ Utilizamos as seguintes versões em nosso teste:
   - pip 25.1.1
   - confluent-kafka 2.10.1
 
->Importante observar, que o arquivo de configurações entre python e java são diferentes, pois para python não há o atributo **sasl.jaas.config** (utilizado em códigos Java nos exemplos anteriores). devemos informar usuário e o token, em atributos distintos, usando **sasl.username** e **sasl.password**.
+>Importante observar, que o arquivo de configurações entre python e java são diferentes, pois para python não há o atributo **sasl.jaas.config** (utilizado em códigos Java nos exemplos anteriores). 
+>Devemos informar usuário e o token, em atributos distintos, usando **sasl.username** e **sasl.password**.
 
 Veja o arquivo **streaming-python-consumer.properties** de exemplo:
 
