@@ -1590,8 +1590,7 @@ Utilizamos as seguintes versões em nosso teste:
 
 >Importante observar, que o arquivo de configurações entre python e java são diferentes, pois para python não há o atributo **sasl.jaas.config** (utilizado em códigos Java nos exemplos anteriores). 
 
->Devemos informar usuário e o token, em atributos distintos, usando **sasl.username** e **sasl.password**.
-
+Devemos informar usuário e o token, em atributos distintos, usando **sasl.username** e **sasl.password**.
 Veja o arquivo **streaming-python-consumer.properties** de exemplo:
 
   ```
