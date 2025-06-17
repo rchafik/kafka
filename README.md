@@ -1591,7 +1591,10 @@ Utilizamos as seguintes versões em nosso teste:
 >Importante observar, que o arquivo de configurações entre python e java são diferentes, pois para python não há o atributo **sasl.jaas.config** (utilizado em códigos Java nos exemplos anteriores). 
 
 Devemos informar usuário e o token, em atributos distintos, usando **sasl.username** e **sasl.password**.
-Veja o arquivo **streaming-python-consumer.properties** de exemplo:
+
+**Streaming**
+
+Arquivo **streaming-python-consumer.properties**:
 
   ```
     bootstrap.servers=cell-1.streaming.sa-saopaulo-1.oci.oraclecloud.com:9092
@@ -1608,6 +1611,24 @@ Veja o arquivo **streaming-python-consumer.properties** de exemplo:
     session.timeout.ms=6000
     heartbeat.interval.ms=5000
   ```
+
+**Managed Kafka**
+
+Arquivo **kafka-python-producer.properties**:
+
+  ```
+    bootstrap.servers=bootstrap-clstr-xxxx.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092
+    security.protocol=SASL_SSL
+    sasl.mechanism=SCRAM-SHA-512
+    # CA certificate file for verifying the broker's certificate.
+    ssl.ca.location=/home/opc/kafka/DigiCertGlobalRootG2.crt.pem
+    sasl.username=super-user-xxxx
+    sasl.password=password
+  ```
+
+Referências:
+  - [Configure librdkafka client](https://github.com/confluentinc/librdkafka/wiki/Using-SSL-with-librdkafka)
+
 
 ## Acknowledgments
 
