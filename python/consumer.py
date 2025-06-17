@@ -1,6 +1,7 @@
 from confluent_kafka import Consumer, KafkaException
 import logging
 import os
+import sys
 
 def load_properties(file_path):
     props = {}
@@ -24,8 +25,12 @@ def load_properties(file_path):
                 props[key] = value
     return props
 
-def create_consumer():
-    conf = load_properties("streaming-python-consumer.properties")
+def create_consumer(environment):  
+    if environment == "kafka":
+        conf = load_properties("kafka-python-consumer.properties")
+    else:
+        conf = load_properties("streaming-python-consumer.properties")
+    # Create Consumer instance
     consumer = Consumer(conf)
     return consumer
 
@@ -53,12 +58,22 @@ def consume_messages(consumer, topic):
 
 if __name__ == '__main__':
 
+    ambiente = sys.argv[1]
+
+    if ambiente == "kafka":
+        print("Utilizando Kafka gerenciado")
+    elif ambiente == "streaming":
+        print("Utilizando Streaming")
+    else:
+        print("Opção inválida. Utilize 'kafka' ou 'streaming'.")
+        sys.exit(1)
+
     logging.basicConfig(level=logging.DEBUG)
     
     topic = 'aTeamTopic'
 
     print ("Starting...")
-    consumer = create_consumer()
+    consumer = create_consumer(ambiente)
 
     try:
         consume_messages(consumer, topic)
