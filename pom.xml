@@ -33,6 +33,31 @@
       <scope>test</scope>
     </dependency>
 
+  <!-- https://mvnrepository.com/artifact/com.oracle.oci.sdk/oci-java-sdk-streaming -->
+  <dependency>
+      <groupId>com.oracle.oci.sdk</groupId>
+      <artifactId>oci-java-sdk-streaming</artifactId>
+      <version>3.67.2</version>
+  </dependency> 
+
+    <dependency>
+      <groupId>org.tomitribe</groupId>
+      <artifactId>tomitribe-http-signatures</artifactId>
+      <version>1.0</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.oracle.oci.sdk</groupId>
+      <artifactId>oci-java-sdk-common-httpclient-jersey</artifactId>
+      <version>3.67.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>31.1-jre</version>
+    </dependency>  
+
     <!-- Kafka Client -->
     <dependency>
         <groupId>org.apache.kafka</groupId>
