@@ -1605,6 +1605,7 @@ Para iniciar o serviço **kafka-rest**, será iniciado na porta :
 
 Referências:
   - [Kafka REST Proxy](https://github.com/confluentinc/kafka-rest/)
+  - [Karapace - A free and Open Source tool](https://www.karapace.io/)
 
 # Testes com Python
 
