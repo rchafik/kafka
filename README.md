@@ -1577,7 +1577,34 @@ Referências:
   - [Get started with InfluxDB](https://docs.influxdata.com/influxdb/v2/get-started/)
   - [What is Apache Kafka and how to perform performance tests on it (Part 2)](https://medium.com/@gpiechnik/what-is-apache-kafka-and-how-to-perform-performance-tests-on-it-part-2-54177fc6631c)
 
+# Testes com Kafka REST Proxy
 
+Realizamos os testes em ambiente local com os produtos da Confluence, utilizando a versão disponível para uso em ambiente de desenvolvimento:
+
+  ```
+    git clone https://github.com/confluentinc/kafka-rest.git
+    cd kafka-rest
+    git checkout 8.0.0-post
+    mvn clean package
+  ```
+
+Antes de iniciar o serviço, foi necessário alterar o arquivo **kafka-rest/config/kafka-rest.properties** com as seguintes propriedades:
+
+  ```
+  bootstrap.servers=bootstrap-clstr-xxx.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092
+  client.security.protocol=SASL_SSL
+  client.sasl.mechanism=SCRAM-SHA-512
+  client.sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="super-user-xxx" password="senha";
+  ```
+
+Para iniciar o serviço **kafka-rest**, será iniciado na porta :
+
+  ```
+  ./bin/kafka-rest-start ./config/kafka-rest.properties
+  ```
+
+Referências:
+  - [Kafka REST Proxy](https://github.com/confluentinc/kafka-rest/)
 
 # Testes com Python
 
