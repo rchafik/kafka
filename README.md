@@ -7,11 +7,11 @@
   - [x] Review best practices, such as storing security artifacts in vault or bucket
 
 - **Streaming**
-  - [x] Streaming Producer and Consumer
+  - [x] Producer and Consumer using Java and Python
   - [x] After I configured to use more recent versions of the Kafka libraries in the project, it was necessary to define the parameter [enable.idempotence=false] in the properties of the class that produces the messages, because this error was occurring: *org.apache.kafka.common.errors.UnsupportedVersionException: The broker does not support INIT_PRODUCER_ID*
 
 - **Kafka**
-  - [x] SASL-SCRAM Producer and Consumer
+  - [x] SASL-SCRAM Producer and Consumer using Java and Python
   - [x] mTLS Producer and Consumer
   - [x] Use Kafka **super user** and setup ACLs (topics, users and permissions between artifacts)
   - [x] Plug in a graphical interface to manage the environment
@@ -23,6 +23,7 @@
   - [x] Describe security items in more detail, especially about the use of **mTLS** and **Certification Authority** in OCI Services, providing Customer´s certificates signed by Oracle CA (recommended for Production Environments).
   - [x] Testing with Kafka Connect
   - [x] Testing and Considerations on Performance
+  - [x] Testing Kafka Rest Proxy
 
 **Directory Structure**
 
