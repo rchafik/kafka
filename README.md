@@ -1579,6 +1579,8 @@ Referências:
 
 # Testes com Kafka REST Proxy
 
+>Neste momento o produto Manageg Kafka não possui essa funcionalidade. Está previsto um add-on para isso no produto, mas ainda sem ETA.
+
 Realizamos os testes em ambiente local com os produtos da Confluence, utilizando a versão disponível para uso em ambiente de desenvolvimento:
 
   ```
@@ -1597,11 +1599,16 @@ Antes de iniciar o serviço, foi necessário alterar o arquivo **kafka-rest/conf
   client.sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="super-user-xxx" password="senha";
   ```
 
-Para iniciar o serviço **kafka-rest**, será iniciado na porta :
+Para iniciar o serviço **kafka-rest**, será iniciado na porta 8082:
 
   ```
   ./bin/kafka-rest-start ./config/kafka-rest.properties
   ```
+Depois basta seguir os comandos que constam no link de referêcia sobre o **Kafka Rest Proxy**, para:
+  - listar os cluster;
+  - listar os tópicos;
+  - produzir mensagens;
+  - gerar um consumer group e fazer a subscrição num tópico, para consumir as as mensagens.
 
 Referências:
   - [Kafka REST Proxy](https://github.com/confluentinc/kafka-rest/)
