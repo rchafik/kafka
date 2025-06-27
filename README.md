@@ -1605,7 +1605,7 @@ Para iniciar o serviço **kafka-rest**, será iniciado na porta 8082:
   ./bin/kafka-rest-start ./config/kafka-rest.properties
   ```
 Depois basta seguir os comandos que constam no link de referêcia sobre o **Kafka Rest Proxy**, para:
-  - listar os cluster;
+  - listar o cluster;
   - listar os tópicos;
   - produzir mensagens;
   - gerar um consumer group e fazer a subscrição num tópico, para consumir as as mensagens.
