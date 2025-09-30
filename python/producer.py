@@ -60,7 +60,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 logging.info('Producing...')
 producer = start_kafka_producer(ambiente)
-topic = 'aTeamTopic'
+topic = 'ateam-topic'
 
 number_of_messages = 100
 start_time = time.time() 

@@ -70,7 +70,7 @@ if __name__ == '__main__':
 
     logging.basicConfig(level=logging.DEBUG)
     
-    topic = 'aTeamTopic'
+    topic = 'ateam-topic'
 
     print ("Starting...")
     consumer = create_consumer(ambiente)
