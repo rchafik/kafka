@@ -15,7 +15,7 @@ public class KafkaSASL_SSLConsumer {
 
    public static void main(String[] args) throws Exception {
        
-      String topic = "ateam-topic-sasl-ssl";
+      String topic = "ateam-topic";
 
       Properties properties = PropertiesUtil.loadProperties(Environments.KAFKA_SASL_SSL_CONSUMER);
 

@@ -403,7 +403,7 @@ sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule require
 
 **Arquivos Java de Exemplo com SASL_SSL:**
 
-- Classe KafkaSASL_SSLProducer.java e kafka-sasl-ssl-consumer.properties:
+- Classe KafkaSASL_SSLProducer.java e kafka-sasl-ssl-producer.properties:
 
   ```
   bootstrap.servers=bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092
