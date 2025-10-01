@@ -160,6 +160,9 @@ Os arquivos abaixo são exemplos criados e seus arquivos de propriedades utiliza
 
 ![managed kafka](images/00_ManagedKafka.png "managed kafka")
 
+**Documentação:**
+  - [Streaming with Apache Kafka](https://docs.oracle.com/en-us/iaas/Content/kafka/home.htm)
+
 **Policy on behalf of Customer to Rawfka( MUST )**
 ```
 Allow service rawfka to use vnics in compartment <compartment>

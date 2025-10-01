@@ -1,0 +1,410 @@
+Streaming with Apache Kafka
+	
+	documentação: 
+		https://docs.oracle.com/en-us/iaas/Content/kafka/home.htm
+	    https://docs.oracle.com/en-us/iaas/Content/kafka/metrics.htm
+
+Tenancy: 
+	b3managedkafkaday
+		- único tenancy configurado com remote peering usando DRG para o Mirror Maker
+		- tudo provisionado em ambas regiões
+		- aqui está o lab do MirrorMaker
+		
+	b3managedkafkaday2
+		- VCP
+		- GRU
+		
+	b3managedkafkaday6
+		- liberado acesso para Sillas
+		
+	b3managedkafkaday7
+		- liberado acesso para João, vai tentar replicar automaticamente o que foi feito no tenancy principal
+
+Regiões: 
+	GRU 
+	VCP
+
+Atividades de Infraestrutura:
+
+	Criação do compartment (Identity & Security -> Compartments): lab
+	
+	Criação da VCN (Networking -> Virtual Cloud Networks)
+		selecionar o compartment lab
+		
+		ATENÇÃO: atentar para a região
+		
+		Clicar em Actions e Start VCN Wizard. Vamos escolher a opção "Create VCN with Internet Connectivity"
+		
+		GRU
+			nome    : vcnGRU
+			VCN CIDR: 10.0.0.0/16
+			privada : 10.0.1.0/24
+			pública : 10.0.0.0/24
+		
+		VCP
+			nome     : vcnVCP
+			VCN CIDR : 172.16.0.0/16
+			privada  : 172.16.1.0/24
+			pública  : 172.16.0.0/24
+			
+		ATENÇÃO: Depois da VCN criada, ajustar a security list, tanto privada quanto pública, liberando os acessos para todas as portas e protocolos, onde o Source seja o CIDR Block da sua VCN.
+			
+				
+	Criação Vault (Identity & Security -> Key Management & Secret Management)
+		Criar vault
+			vaultVCP
+			vaultGRU
+		
+		Master encryption keys (utilizar os valores padrão já selecionados)
+			keyVCP
+			keyGRU
+		
+		Secrets
+			Neste passo, será necessário selecionar a Encryption Key criada no passo anterior
+			ATENÇÃO: gerar secret do tipo [Manual secret generation]
+				* pode colocar qualquer texto dentro de Secret contents
+				
+			secretKafkaVCP
+			secretKafkaGRU
+			
+Policies (Identity & Security)
+	Name: kafkaPolicies
+	Description: kafka day
+	
+	Clicar no botão "Show Manual editor", copiar e colar as policies abaixo:
+
+	Allow service rawfka to use vnics in compartment lab
+	Allow service rawfka to use network-security-groups in compartment lab
+	Allow service rawfka to use subnets in compartment lab
+	Allow service rawfka to {SECRET_UPDATE} in compartment lab
+	Allow service rawfka to use secrets in compartment lab where request.operation = 'UpdateSecret'
+	
+Provisionar o Cluster Kafka (Developer Services -> Developer Services):
+	Cluster name:
+		kafkaClusterVCP
+		kafkaClusterGRU
+	
+	Compartment: lab
+	
+	Apache Kafka Version: 3.7.0
+	
+	escolher o cluster do tipo: "Starter Cluster" (DEVELOPMENT - para testes e desenvolvimento)
+		* não altere a quantidade de brokers ou OCPU ou Storage
+
+	Em Cluster configuration, não vamos mudar nada e manter as informações default;
+	
+	Na configuração do mTLS vamos dar um bypass, sem informar nada. Veremos isso depois.
+	
+	Na opção "Choose VCN and subnet", vamos utilizar a subnet privada.
+	
+	Revise as opções escolhidas e clique em criar o Cluster. Isso pode demorar alguns minutos.
+
+			
+Preparação de artefatos para utilizarmos mTLS com o Cluster Kafka:
+
+	#criar a pasta lab, via Cloud Shell ou provisionando Computes
+		*ATENÇÃO* 
+			O cloud shell só permite configurar subnets privadas para sua região local, neste GRU
+			Somente um tenancy foi configurado com remote peering via DRG
+	
+	mkdir lab
+	cd lab
+	
+	#generate a CA key
+	openssl genpkey -algorithm RSA -out rootCA.key -aes256 -pass pass:kafkaDay -pkeyopt rsa_keygen_bits:4096
+	
+	#generate CA self signed cert
+	openssl req -x509 -new -nodes -key rootCA.key -sha256 -days 3650 -out rootCA.pem -passin pass:kafkaDay
+		*ATENÇÃO*: 
+			vamos apenas informar o common name = kafka
+			os campos vazios, informamos . (ponto)
+			não é necessário colocar nenhuma senha, basta pressionar enter
+	
+	#create leaf cert private key and csr(cert signed request)
+	openssl genpkey -algorithm RSA -out leaf.key -pkeyopt rsa_keygen_bits:2048		
+	
+	#create leaf cert csr
+	openssl req -new -key leaf.key -out leaf.csr
+		*ATENÇÃO*: 
+			vamos apenas informar o common name = yoda
+			os campos vazios, informamos . (ponto)
+			não é necessário colocar nenhuma senha, basta pressionar enter
+	
+	#use root CA to sign leaf cert
+	openssl x509 -req -in leaf.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out leaf.crt -days 825 -sha256 -passin pass:kafkaDay
+	
+	#create kafka-keystore.p12
+	openssl pkcs12 -export -in leaf.crt -inkey leaf.key -out kafka-keystore.p12 -name kafka-key
+		ATENÇÃO: 
+			neste procedimento informe uma senha, neste caso, coloque: kafkaDay
+	
+
+Atualização do Kafka Cluster
+	vamos atualizar o kafka cluster para utilizarmos:
+	
+	mTLS: 
+		temos que clicar em "Edit Cluster"
+		precisamos inserir o conteúdo do arquivo "rootCA.pem" gerado no procedimento anterior, dentro de Security settings em Mutual TLS (mTLS):
+			cat rootCA.pem
+		clicar em Update e aguardar uns minutos.
+		
+	SASL SCRAM:
+		No cluster vai aparecer um link "Update SASL SCRAM", temos que clicar nele;
+		Precisamos informar o vault e o secret, para que o kafka possa gerar as credenciais do super user.
+		clicar em Update e aguardar uns minutos.
+
+Criação Compute, para os labs usando VsCode se conectando remotamente
+	Image and shape
+		Oracle Linux 9
+		Shape Ampere -> VM.Standard.A1.Flex (não precisa mudar OCPU ou memória, deixar o padrão)
+	
+	Networking
+		escolher a subnet pública
+		
+	Security
+		lembre de adicionar sua chave pública ou peça para gerar o seu par de chaves, para depois você conseguir se conectar na instância
+				
+	Setup Computes:
+		#telnet
+			sudo yum install -y telnet
+		
+		#jdk 17
+			sudo dnf install -y jdk-17-headful
+		
+		#instalar o kafka nas máquinas
+			cd ~
+			mkdir kafka
+			cd kafka
+			wget https://dlcdn.apache.org/kafka/3.7.2/kafka_2.13-3.7.2.tgz
+			tar -xzf kafka_2.13-3.7.2.tgz
+			rm -rf kafka_2.13-3.7.2.tgz
+			cd ~
+			# altere o arquivo [.basrch] adicionando a linha abaixo, para colocar o kafka no path da sua VM
+			export PATH=/home/opc/kafka/kafka_2.13-3.7.2/bin:$PATH	
+		
+		#git
+			sudo dnf install -y git-all
+		
+		#python
+			sudo dnf groupinstall "Development Tools" -y
+			sudo dnf install zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel libffi-devel findutils -y
+			sudo dnf install -y gcc gcc-c++ make python3-devel
+			curl https://pyenv.run | bash
+				*ATENÇÃO*: ajustar o arquivo .bashrc, adicionando o conteúdo que foi retornado durante a instalação e reiniciar o mesmo
+					
+			pyenv install 3.12.10
+			pyenv global 3.12.10
+			pyenv local 3.12.10	
+			
+			pip install --upgrade pip
+			pip install confluent_kafka
+
+
+Testes com os binários do Kafka para produzir e consumir mensagens:
+
+	SASL-SCRAM
+		coletar as informações de conexão no cluster kafka para esse protocolo
+		dados do super user está no secret (pode consultar o cluster kafka e clicar em settings)
+			- clicar em view secret content
+			- usar a opção Show decoded Base64 digit
+	
+	cd ~/lab
+	
+	{"username": "super-user-rresnr8xacvzlnq5", "password": "d65863f5-4f3f-4237-b478-5c1b9291cdab"}
+	
+	#arquivo sasl.properties
+	security.protocol=SASL_SSL
+	sasl.mechanism=SCRAM-SHA-512
+	sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="super-user-rresnr8xacvzlnq5" password="d65863f5-4f3f-4237-b478-5c1b9291cdab";
+		
+	kafka-broker-api-versions.sh --bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 --command-config sasl.properties
+	
+	kafka-topics.sh --create \
+	  --bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+	  --partitions 1 \
+	  --topic ateam-topic \
+	  --command-config sasl.properties
+	  
+	kafka-console-producer.sh \
+	--broker-list bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+	--topic ateam-topic --producer.config sasl.properties	
+
+	kafka-console-consumer.sh \
+	--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+	--topic ateam-topic --from-beginning --consumer.config sasl.properties
+	
+	kafka-topics.sh --list \
+	--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+	--command-config sasl.properties
+	
+	mTLS
+		bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093
+	
+	#arquivo mtls.properties
+	security.protocol=SSL
+	ssl.keystore.password=kafkaDay
+	ssl.keystore.location=/home/opc/lab/kafka-keystore.p12
+	
+	cd /home/opc/lab
+	
+	kafka-topics.sh --list \
+	--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
+	--command-config mtls.properties
+	
+	kafka-console-producer.sh \
+	--broker-list bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
+	--topic mtls-topic --producer.config mtls.properties	
+	
+	kafka-console-consumer.sh \
+	--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
+	--topic mtls-topic --from-beginning --consumer.config mtls.properties
+	
+	ACL com mTLS
+		* openssl x509 -in leaf.crt -noout -subject
+		* para o setup deve-se utilizar o super user com SASL-SCRAM
+		
+		doc 
+			https://datatracker.ietf.org/doc/html/rfc2253
+			https://kafka.apache.org/documentation/ -> procurar por ssl.principal.mapping.rules
+		
+		format: User:CN=my-kafka-client,OU=Engineering,O=My Company,C=US,emailAddress=kafka-admins@mycompany.com
+		
+		User:CN=vader,OU=ateam,O=Oracle
+		
+		User:C=BR,O=Oracle,OU=ateam,CN=vader,emailAddress=vader@example.com
+		
+		"CN=writeuser,OU=Unknown,O=Unknown,L=Unknown,ST=Unknown,C=Unknown".
+
+	
+		kafka-topics.sh --create \
+		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+		--partitions 1 \
+		--topic mtls-topic \
+		--command-config sasl.properties
+
+		kafka-acls.sh \
+		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+		--add --allow-principal "User:User:CN=ateam" \
+		--operation Read --operation Write --operation Describe \
+		--topic mtls-topic \
+		--command-config sasl.properties
+
+		kafka-acls.sh \
+		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+		--add --allow-principal "User:CN=ateam" \
+		--operation Read --operation Describe --group '*' \
+		--command-config sasl.properties
+		
+		-> yoda, usando apenas o atributo CN do certificado:
+		#create leaf cert private key and csr(cert signed request)
+		openssl genpkey -algorithm RSA -out yoda.key -pkeyopt rsa_keygen_bits:2048
+		
+		#create leaf cert csr
+		openssl req -new -key yoda.key -out yoda.csr
+		
+		#use root CA to sign leaf cert
+		openssl x509 -req -in yoda.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out yoda.crt -days 825 -sha256 -passin pass:kafkaDay
+		
+		#create kafka-yoda-keystore.p12
+		openssl pkcs12 -export -in yoda.crt -inkey yoda.key -out kafka-yoda-keystore.p12 -name kafka-key
+		ATENÇÃO: neste procedimento informe uma senha, neste caso, coloque: kafkaDay		
+		
+		-> vader, usando mais atributos, conforme esse exemplo: 
+			subject=CN=yoda,OU=ateam,O=Oracle,L=SaoPaulo,ST=SP,C=BR
+			
+		#create leaf cert private key and csr(cert signed request)
+		openssl genpkey -algorithm RSA -out vader.key -pkeyopt rsa_keygen_bits:2048
+
+		#create leaf cert csr
+		openssl req -new -key vader.key -out vader.csr
+
+		#use root CA to sign leaf cert
+		openssl x509 -req -in vader.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out vader.crt -days 825 -sha256 -passin pass:kafkaDay
+
+		#create kafka-vader-keystore.p12
+		openssl pkcs12 -export -in vader.crt -inkey vader.key -out kafka-vader-keystore.p12 -name kafka-key
+		ATENÇÃO: neste procedimento informe uma senha, neste caso, coloque: kafkaDay
+
+		openssl x509 -in vader.crt -noout -subject -nameopt RFC2253 
+		subject=CN=yoda,OU=ateam,O=Oracle,L=SaoPaulo,ST=SP,C=BR
+
+		*ATENÇÃO*: Para configurar o ACL, deve-se retirar o subject= e manter exatamente a string gerada pelo comando openssl.
+
+		kafka-acls.sh \
+		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+		--add --allow-principal "User:CN=yoda,OU=ateam,O=Oracle,L=SaoPaulo,ST=SP,C=BR" \
+		--operation Read --operation Write --operation Describe    \
+		--topic mtls-topic  \
+		--command-config sasl.properties
+		
+		kafka-acls.sh \
+		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+		--add --allow-principal "User:CN=yoda,OU=ateam,O=Oracle,L=SaoPaulo,ST=SP,C=BR" \
+		--operation Read --operation Describe --group '*' \
+		--command-config sasl.properties		
+
+		kafka-console-producer.sh \
+		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
+		--topic mtls-topic \
+		--producer.config mtls-vader.properties
+		
+		kafka-console-consumer.sh \
+		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
+		--topic mtls-topic --from-beginning \
+		--consumer.config mtls-vader.properties	
+		
+	
+Testes com Java e Python para produzir e consumir mensagens	
+	
+	necessário vscode e depois habilitar as extensões
+	
+	conectar remotamente no seu compute provisionado
+		- será necessário ter a chave privada
+		- durante a criação do compute, você informou a chave pública
+	
+	git clone https://github.com/rchafik/kafka.git
+	
+	Java
+		criar os arquivos dentro da pasta config, conforme seu ambiente kafka:
+			kafka-mtls-consumer.properties
+			kafka-mtls-producer.properties
+			kafka-sasl-ssl-consumer.properties
+			kafka-sasl-ssl-producer.properties
+			
+		ajustar o path da pasta config na classe src/main/java/com/oracle/util/PropertiesUtil.java
+		
+		para testes com mTLS, utilizar as classes:
+			src/main/java/com/oracle/KafkaMtlsConsumer.java
+			src/main/java/com/oracle/KafkaMtlsProducer.java
+			
+		para testes com SASL-SCRAM, utilizar as classes:
+			src/main/java/com/oracle/KafkaSASL_SSLConsumer.java
+			src/main/java/com/oracle/KafkaMtlsProducer.java
+	
+	Python
+		ajustar os arquivos conforme o seu cluster kafka:
+			python/kafka-python-consumer.properties
+			python/kafka-python-producer.properties
+			
+		para executar o python:
+			cd python
+			python3.9 producer.py kafka
+			python3.9 consumer.py kafka
+			
+Script bash para publicação de mensagens
+	publicarMensagens.sh
+	
+	#!/usr/bin/env bash
+	counter=0
+	while true; do
+			# put current date as yyyy-mm-dd HH:MM:SS in $date
+			date=$(date '+%Y-%m-%d %H:%M:%S')
+
+			echo "mensagem: $counter - data atual: $date" | kafka-console-producer.sh --broker-list bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 --topic ateam-topic --producer.config /home/opc/lab/sasl.properties
+			counter=$((counter+1))
+			sleep 5
+	done
+	
+	para executar, liberar a permissão: chmod 755 publicarMensagens.sh
+	
+	depois: ./publicarMensagens.sh
