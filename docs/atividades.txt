@@ -310,7 +310,7 @@ Testes com os binários do Kafka para produzir e consumir mensagens:
 		ATENÇÃO: neste procedimento informe uma senha, neste caso, coloque: kafkaDay		
 		
 		-> vader, usando mais atributos, conforme esse exemplo: 
-			subject=CN=yoda,OU=ateam,O=Oracle,L=SaoPaulo,ST=SP,C=BR
+			subject=CN=vader,OU=ateam,O=Oracle,L=SaoPaulo,ST=SP,C=BR
 			
 		#create leaf cert private key and csr(cert signed request)
 		openssl genpkey -algorithm RSA -out vader.key -pkeyopt rsa_keygen_bits:2048
@@ -326,31 +326,43 @@ Testes com os binários do Kafka para produzir e consumir mensagens:
 		ATENÇÃO: neste procedimento informe uma senha, neste caso, coloque: kafkaDay
 
 		openssl x509 -in vader.crt -noout -subject -nameopt RFC2253 
-		subject=CN=yoda,OU=ateam,O=Oracle,L=SaoPaulo,ST=SP,C=BR
+		subject=CN=vader,OU=ateam,O=Oracle,L=SaoPaulo,ST=SP,C=BR
 
 		*ATENÇÃO*: Para configurar o ACL, deve-se retirar o subject= e manter exatamente a string gerada pelo comando openssl.
+		
+		
+		kafka-topics.sh --delete \
+		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+		--topic mtls-topic-vader \
+		--command-config sasl.properties		
+		
+		kafka-topics.sh --create \
+		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+		--partitions 1 \
+		--topic mtls-topic-vader \
+		--command-config sasl.properties		
 
 		kafka-acls.sh \
 		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
-		--add --allow-principal "User:CN=yoda,OU=ateam,O=Oracle,L=SaoPaulo,ST=SP,C=BR" \
+		--add --allow-principal "User:CN=vader,OU=ateam,O=Oracle,L=SaoPaulo,ST=SP,C=BR" \
 		--operation Read --operation Write --operation Describe    \
-		--topic mtls-topic  \
+		--topic mtls-topic-vader  \
 		--command-config sasl.properties
 		
 		kafka-acls.sh \
 		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
-		--add --allow-principal "User:CN=yoda,OU=ateam,O=Oracle,L=SaoPaulo,ST=SP,C=BR" \
+		--add --allow-principal "User:CN=vader,OU=ateam,O=Oracle,L=SaoPaulo,ST=SP,C=BR" \
 		--operation Read --operation Describe --group '*' \
 		--command-config sasl.properties		
 
 		kafka-console-producer.sh \
 		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
-		--topic mtls-topic \
+		--topic mtls-topic-vader \
 		--producer.config mtls-vader.properties
 		
 		kafka-console-consumer.sh \
 		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
-		--topic mtls-topic --from-beginning \
+		--topic mtls-topic-vader --from-beginning \
 		--consumer.config mtls-vader.properties	
 		
 	
