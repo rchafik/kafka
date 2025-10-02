@@ -399,8 +399,6 @@ Arquivo kafkasasl.properties:
 ```
 security.protocol=SASL_SSL
 sasl.mechanism=SCRAM-SHA-512
-ssl.truststore.location=/home/opc/kafka/truststore.jks
-ssl.truststore.password=password
 sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="superUserName" password="password";
 ```
 
@@ -412,8 +410,6 @@ sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule require
   bootstrap.servers=bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092
   security.protocol=SASL_SSL
   sasl.mechanism=SCRAM-SHA-512
-  ssl.truststore.location=/home/opc/kafka/truststore.jks
-  ssl.truststore.password=ateam
   sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="super-user" password="senha";
   key.serializer=org.apache.kafka.common.serialization.StringSerializer
   value.serializer=org.apache.kafka.common.serialization.StringSerializer
@@ -425,8 +421,6 @@ sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule require
   bootstrap.servers=bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092
   security.protocol=SASL_SSL
   sasl.mechanism=SCRAM-SHA-512
-  ssl.truststore.location=/home/opc/kafka/truststore.jks
-  ssl.truststore.password=ateam
   sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="super-user" password="senha";
   group.id=group-sals-ssl
   enable.auto.commit=true
@@ -469,7 +463,7 @@ kafka-acls.sh --bootstrap-server bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopa
 Antes de iniciar, foi necessário criar os certificados do cliente, informando apenas o atributo **CN** em seu processo de criação:
 
 ```
-openssl x509 -in test.crt -noout -subject
+openssl x509 -in test.crt -noout -subject -nameopt RFC2253
 subject=CN = Test
 ```
 
@@ -512,6 +506,71 @@ kafka-console-producer.sh \
 --topic teste-mtls \
 --producer.config kafkaclient.properties
 ```
+
+Para utilizar mais informações no certificado, durante sua criação informamos apenas os seguintes parâmetros:
+- **C** (Country Name): BR
+- **ST** (State or Province Name): SP
+- **L** (Locality Name): SaoPaulo
+- **O** (Organization Name): Oracle
+- **OU** (Organization Unit Name): ateam
+- **CN** (Common Name): vader
+
+```
+#create leaf cert private key and csr(cert signed request)
+openssl genpkey -algorithm RSA -out vader.key -pkeyopt rsa_keygen_bits:2048
+
+#create leaf cert csr
+openssl req -new -key vader.key -out vader.csr
+
+#use root CA to sign leaf cert
+openssl x509 -req -in vader.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out vader.crt -days 825 -sha256 -passin pass:kafkaDay
+
+#create kafka-vader-keystore.p12
+openssl pkcs12 -export -in vader.crt -inkey vader.key -out kafka-vader-keystore.p12 -name kafka-key
+
+#verificar subject do certificado
+openssl x509 -in vader.crt -noout -subject -nameopt RFC2253
+subject=CN=vader,OU=ateam,O=Oracle,L=SaoPaulo,ST=SP,C=BR
+```
+
+Para configurar o ACL, retiramos a string **subject=**:
+
+```
+		kafka-topics.sh --delete \
+		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+		--topic mtls-topic-vader \
+		--command-config sasl.properties		
+		
+		kafka-topics.sh --create \
+		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+		--partitions 1 \
+		--topic mtls-topic-vader \
+		--command-config sasl.properties		
+
+		kafka-acls.sh \
+		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+		--add --allow-principal "User:CN=vader,OU=ateam,O=Oracle,L=SaoPaulo,ST=SP,C=BR" \
+		--operation Read --operation Write --operation Describe    \
+		--topic mtls-topic-vader  \
+		--command-config sasl.properties
+		
+		kafka-acls.sh \
+		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+		--add --allow-principal "User:CN=vader,OU=ateam,O=Oracle,L=SaoPaulo,ST=SP,C=BR" \
+		--operation Read --operation Describe --group '*' \
+		--command-config sasl.properties		
+
+		kafka-console-producer.sh \
+		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
+		--topic mtls-topic-vader \
+		--producer.config mtls-vader.properties
+		
+		kafka-console-consumer.sh \
+		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
+		--topic mtls-topic-vader --from-beginning \
+		--consumer.config mtls-vader.properties
+```
+
 
 **Links sobre ACLs**
 - [Manage Access Control Lists (ACLs) for Authorization in Confluent Platform](https://docs.confluent.io/platform/current/security/authorization/acls/manage-acls.html)
