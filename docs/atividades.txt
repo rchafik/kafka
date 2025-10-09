@@ -198,7 +198,10 @@ Criação Compute, para os labs usando VsCode se conectando remotamente
 			
 			pip install --upgrade pip
 			pip install confluent_kafka
-
+		
+		#oci cli
+			pip install oci-cli
+			oci setup config
 
 Testes com os binários do Kafka para produzir e consumir mensagens:
 
