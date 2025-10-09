@@ -1736,7 +1736,7 @@ Pontos importantes, para que não ocorra interrupção do serviço durante as op
   - deve possuir pelo menos **3 brokers**;
   - utilizar os parâmetros de configuração (são sugeridos durante a criação de um cluster produtivo via console) para que os brokers reiniciem sem causar falhas de read/write:
 
-    ```
+  ```
     allow.everyone.if.no.acl.found=true
     auto.create.topics.enable=true
     leader.imbalance.per.broker.percentage=1
@@ -1745,36 +1745,36 @@ Pontos importantes, para que não ocorra interrupção do serviço durante as op
     min.insync.replicas=2
     transaction.state.log.min.isr=2
     transaction.state.log.replication.factor=3
-   ```
+  ```
 
 Exemplo de como realizar o scale do kafka cluster via oci cli:
   
   ```
-  #listar os cluster informando o ocid seu compartment para obter o ocid1.kafkacluster
-  oci kafka cluster list --all --compartment-id ocid1.compartment.oc1..xyz
+    #listar os cluster informando o ocid seu compartment para obter o ocid1.kafkacluster
+    oci kafka cluster list --all --compartment-id ocid1.compartment.oc1..xyz
 
-  #criamos o arquivo json broker-shape.json com esse conteúdo, apenas adicionando um novo broker ao kafka cluster:
+    #criamos o arquivo json broker-shape.json com esse conteúdo, apenas adicionando um novo broker ao kafka cluster:
 
-  {
-      "node-count": 4,
-      "ocpu-count": 2,
-      "storage-size-in-gbs": 200
-  }
+    {
+        "node-count": 4,
+        "ocpu-count": 2,
+        "storage-size-in-gbs": 200
+    }
 
-  #comando para atualizar o kafka cluster 
-  oci kafka cluster update \
-  --kafka-cluster-id ocid1.kafkacluster.oc1.sa-saopaulo-1.xyz \
-  --broker-shape file://broker-shape.json
+    #comando para atualizar o kafka cluster 
+    oci kafka cluster update \
+    --kafka-cluster-id ocid1.kafkacluster.oc1.sa-saopaulo-1.xyz \
+    --broker-shape file://broker-shape.json
   ```
 
 >**Importante**: antes de prosseguir ao próximo passo, seu ambiente deve estar no ar e todos os brokers devem estar disponíveis.
 
   ```
-  #para verificar o status do seu cluster
-  oci kafka cluster get --kafka-cluster-id ocid1.kafkacluster.oc1.sa-saopaulo-1.xyz | grep lifecycle-state
+    #para verificar o status do seu cluster
+    oci kafka cluster get --kafka-cluster-id ocid1.kafkacluster.oc1.sa-saopaulo-1.xyz | grep lifecycle-state
 
-  #para listar os brokers que estão disponíveis do seu cluster utilizando o super user com o protocolo SASL-SCRAM
-  kafka-broker-api-versions.sh --bootstrap-server bootstrap-clstr-xyz.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 --command-config sasl.properties | grep id
+    #para listar os brokers que estão disponíveis do seu cluster utilizando o super user com o protocolo SASL-SCRAM
+    kafka-broker-api-versions.sh --bootstrap-server bootstrap-clstr-xyz.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 --command-config sasl.properties | grep id
   ```
 
 Após o scale do seu cluster kafka ter finalizado, deve-se executar o script **kafka-reassign-partitions.sh**, para rebalanceamento das partições.
@@ -1783,59 +1783,59 @@ Após o scale do seu cluster kafka ter finalizado, deve-se executar o script **k
 Preparação para execução do script **kafka-reassign-partitions.sh**:
 
 ```
-#para confirmar a quantidade de brokers disponíveis e seus IDs, neste caso deverá retornar 4. 
-#pode demorar até que o seu novo broker esteja disponível, por isso essa validação é importante:
-kafka-broker-api-versions.sh \
---bootstrap-server bootstrap-clstr-xyz.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
---command-config sasl.properties | grep id
+  #para confirmar a quantidade de brokers disponíveis e seus IDs, neste caso deverá retornar 4. 
+  #pode demorar até que o seu novo broker esteja disponível, por isso essa validação é importante:
+  kafka-broker-api-versions.sh \
+  --bootstrap-server bootstrap-clstr-xyz.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+  --command-config sasl.properties | grep id
 
-#lista seus tópicos
-kafka-topics.sh --list \
---bootstrap-server bootstrap-clstr-xyz.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
---command-config sasl.properties
+  #lista seus tópicos
+  kafka-topics.sh --list \
+  --bootstrap-server bootstrap-clstr-xyz.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+  --command-config sasl.properties
 
-#detalha o seu tópico
-kafka-topics.sh --describe --topic prd-topic \
---bootstrap-server bootstrap-clstr-xyz.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
---command-config sasl.properties
+  #detalha o seu tópico
+  kafka-topics.sh --describe --topic prd-topic \
+  --bootstrap-server bootstrap-clstr-xyz.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+  --command-config sasl.properties
 
-#criamos o arquivo topics.json com o seguinte conteúdo, informando o tópico a ser rebalanceado:
-{
-  "topics": [{"topic": "prd-topic"}],
-  "version":1
-}
+  #criamos o arquivo topics.json com o seguinte conteúdo, informando o tópico a ser rebalanceado:
+  {
+    "topics": [{"topic": "prd-topic"}],
+    "version":1
+  }
 
-#executamos o script para gerar a sugestão de rebalanceamento dentro do arquivo comando.txt:
-kafka-reassign-partitions.sh --generate \
---topics-to-move-json-file topics.json \
---broker-list "0,1,2,3" \
---bootstrap-server bootstrap-clstr-xyz.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
---command-config sasl.properties > comando.txt
+  #executamos o script para gerar a sugestão de rebalanceamento dentro do arquivo comando.txt:
+  kafka-reassign-partitions.sh --generate \
+  --topics-to-move-json-file topics.json \
+  --broker-list "0,1,2,3" \
+  --bootstrap-server bootstrap-clstr-xyz.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+  --command-config sasl.properties > comando.txt
 
-#analisando o arquivo comando.txt:
-Current partition replica assignment
-{"version":1,"partitions":[{"topic":"prd-topic","partition":0,"replicas":[2,0,1],"log_dirs":["any","any","any"]}]}
+  #analisando o arquivo comando.txt:
+  Current partition replica assignment
+  {"version":1,"partitions":[{"topic":"prd-topic","partition":0,"replicas":[2,0,1],"log_dirs":["any","any","any"]}]}
 
-Proposed partition reassignment configuration
-{"version":1,"partitions":[{"topic":"prd-topic","partition":0,"replicas":[3,1,2],"log_dirs":["any","any","any"]}]}
+  Proposed partition reassignment configuration
+  {"version":1,"partitions":[{"topic":"prd-topic","partition":0,"replicas":[3,1,2],"log_dirs":["any","any","any"]}]}
 
-#você pode gerar um backup de como estava o balanceamento do seu tópico:
-grep version comando.txt | head -1 > backup-expand-cluster-reassignment.json
+  #você pode gerar um backup de como estava o balanceamento do seu tópico:
+  grep version comando.txt | head -1 > backup-expand-cluster-reassignment.json
 
-#aqui você gera um arquivo json com a sugestão de excecução:
-grep version comando.txt | tail -1 > expand-cluster-reassignment.json
+  #aqui você gera um arquivo json com a sugestão de excecução:
+  grep version comando.txt | tail -1 > expand-cluster-reassignment.json
 
-#executa o script para rebalanceamento:
-kafka-reassign-partitions.sh --execute \
---reassignment-json-file expand-cluster-reassignment.json \
---bootstrap-server bootstrap-clstr-xyz.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
---command-config sasl.properties
+  #executa o script para rebalanceamento:
+  kafka-reassign-partitions.sh --execute \
+  --reassignment-json-file expand-cluster-reassignment.json \
+  --bootstrap-server bootstrap-clstr-xyz.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+  --command-config sasl.properties
 
-#script para verificar o término da execução:
-kafka-reassign-partitions.sh --verify \
---reassignment-json-file expand-cluster-reassignment.json \
---bootstrap-server bootstrap-clstr-xyz.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
---command-config sasl.properties
+  #script para verificar o término da execução:
+  kafka-reassign-partitions.sh --verify \
+  --reassignment-json-file expand-cluster-reassignment.json \
+  --bootstrap-server bootstrap-clstr-xyz.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+  --command-config sasl.properties
 ```
 
 Referências:
