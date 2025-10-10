@@ -717,6 +717,7 @@ connect-mirror-maker.sh mirror-maker.properties
 Referências:
 
 - [Como usar o Kafka MirrorMaker 2.0 na migração e replicação de dados e nos casos de uso](https://learn.microsoft.com/pt-br/azure/hdinsight/kafka/kafka-mirrormaker-2-0-guide)
+- [Setup Apache Kafka Mirror Maker 2.0 in Oracle OCI Streaming With Apache Kafka ACTIVE/ACTIVE](https://github.com/jctarla/oci-managed-kafka-mirror-maker)
 
 
 **Testes com Schema Registry e artefatos Avro**
