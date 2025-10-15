@@ -1,5 +1,9 @@
 # Streaming and Managed Kafka
 
+> **IMPORTANT**: This blog is designed solely for educational and study purposes. It provides an environment for learners to experiment and gain practical experience in a controlled setting. It is crucial to note that the security configurations and practices employed in this lab might not be suitable for real-world scenarios.
+Security considerations for real-world applications are often far more complex and dynamic. Therefore, before implementing any of the techniques or configurations demonstrated here in a production environment, it is essential to conduct a comprehensive security assessment and review. This review should encompass all aspects of security, including access control, encryption, monitoring, and compliance, to ensure that the system aligns with the organization's security policies and standards.
+Security should always be a top priority when transitioning from a lab environment to a real-world deployment.
+
 # Summary
 
 - **General**
