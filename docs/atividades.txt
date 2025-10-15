@@ -10,16 +10,6 @@ Tenancy:
 		- tudo provisionado em ambas regiões
 		- aqui está o lab do MirrorMaker
 		
-	b3managedkafkaday2
-		- VCP
-		- GRU
-		
-	b3managedkafkaday6
-		- liberado acesso para Sillas
-		
-	b3managedkafkaday7
-		- liberado acesso para João, vai tentar replicar automaticamente o que foi feito no tenancy principal
-
 Regiões: 
 	GRU 
 	VCP
@@ -37,15 +27,15 @@ Atividades de Infraestrutura:
 		
 		GRU
 			nome    : vcnGRU
-			VCN CIDR: 10.0.0.0/16
-			privada : 10.0.1.0/24
+			VCN CIDR: 10.0.0.0/16			
 			pública : 10.0.0.0/24
+			privada : 10.0.1.0/24
 		
 		VCP
 			nome     : vcnVCP
-			VCN CIDR : 172.16.0.0/16
-			privada  : 172.16.1.0/24
+			VCN CIDR : 172.16.0.0/16			
 			pública  : 172.16.0.0/24
+			privada  : 172.16.1.0/24
 			
 		ATENÇÃO: Depois da VCN criada, ajustar a security list, tanto privada quanto pública, liberando os acessos para todas as portas e protocolos, onde o Source seja o CIDR Block da sua VCN.
 			
@@ -401,8 +391,10 @@ Testes com Java e Python para produzir e consumir mensagens
 			python3.9 producer.py kafka
 			python3.9 consumer.py kafka
 			
-Script bash para publicação de mensagens
-	publicarMensagens.sh
+Script bash para publicação de mensagens durante scale do cluster kafka, para validar que não há interrupção do serviço:
+	ATENÇÃO: testar no cluster produtivo criado para a demonstração.
+
+	criar o arquivo publicarMensagens.sh
 	
 	#!/usr/bin/env bash
 	counter=0
