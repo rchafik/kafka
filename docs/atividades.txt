@@ -128,6 +128,9 @@ Preparação de artefatos para utilizarmos mTLS com o Cluster Kafka:
 		ATENÇÃO: 
 			neste procedimento informe uma senha, neste caso, coloque: kafkaDay
 	
+	#para verificar o subject do certificado assinado
+	openssl x509 -in leaf.crt -noout -subject -nameopt RFC2253
+	subject=CN=yoda
 
 Atualização do Kafka Cluster
 	vamos atualizar o kafka cluster para utilizarmos:
@@ -253,33 +256,32 @@ Testes com os binários do Kafka para produzir e consumir mensagens:
 	--topic mtls-topic --from-beginning --consumer.config mtls.properties
 	
 	ACL com mTLS
-		* openssl x509 -in leaf.crt -noout -subject -nameopt RFC2253 
 		* para o setup deve-se utilizar o super user com SASL-SCRAM
 		
 		doc 
 			https://datatracker.ietf.org/doc/html/rfc2253
 			https://kafka.apache.org/documentation/ -> procurar por ssl.principal.mapping.rules
 		
-		ao preencher os atributos, o seu certificado deverá ter apenas essas informações:
-			subject=CN=vader,OU=ateam,O=Oracle,L=SaoPaulo,ST=SP,C=BR
-		ou para iniciar esse case, apenas informe o atributo CN.
+		vamos lembrar como geramos o subject do nosso certificado:		
+			openssl x509 -in leaf.crt -noout -subject -nameopt RFC2253
+			subject=CN=yoda
 	
 		kafka-topics.sh --create \
 		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
 		--partitions 1 \
-		--topic mtls-topic \
+		--topic yoda-mtls-topic \
 		--command-config sasl.properties
 
 		kafka-acls.sh \
 		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
-		--add --allow-principal "User:User:CN=ateam" \
+		--add --allow-principal "User:CN=yoda" \
 		--operation Read --operation Write --operation Describe \
-		--topic mtls-topic \
+		--topic yoda-mtls-topic \
 		--command-config sasl.properties
 
 		kafka-acls.sh \
 		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
-		--add --allow-principal "User:CN=ateam" \
+		--add --allow-principal "User:CN=yoda" \
 		--operation Read --operation Describe --group '*' \
 		--command-config sasl.properties
 		
