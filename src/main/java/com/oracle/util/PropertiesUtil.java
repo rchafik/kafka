@@ -19,7 +19,7 @@ public class PropertiesUtil {
     public static Properties loadProperties (Environments environment) {        
         Properties properties = null;
         try {
-            InputStream input = new FileInputStream("/home/opc/chafik/kafka/config/" + environment.getEnvironment() + ".properties");
+            InputStream input = new FileInputStream("/u01/rchafik/kafka/config/" + environment.getEnvironment() + ".properties");
             properties = new java.util.Properties();
             properties.load(input);
         } catch (IOException e) {

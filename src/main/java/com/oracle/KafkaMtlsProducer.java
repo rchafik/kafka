@@ -12,7 +12,7 @@ public class KafkaMtlsProducer {
 
    public static void main(String[] args) throws Exception{
 
-      String topicName = "ateam-topic-mtls";
+      String topicName = "mtls-topic";
 
       Properties properties = PropertiesUtil.loadProperties(Environments.KAFKA_MTLS_PRODUCER);
 

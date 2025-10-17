@@ -585,7 +585,7 @@ Para configurar o ACL, retiramos a string **subject=**:
 
 - [Securing Kafka with Mutual TLS and ACLs](https://medium.com/lydtech-consulting/securing-kafka-with-mutual-tls-and-acls-b235a077f3e3)
 
-**Testes com Interface Gráfica com o Kafka**
+## Testes com Interface Gráfica com o Kafka
 
 Utilizamos o [kafka-ui](https://github.com/provectus/kafka-ui)
 
@@ -598,8 +598,16 @@ Depois esse comando para criar um túnel e possibilitar a comunicação usando o
 ```
 ssh opc@ipVM -i /pathChavePrivada/ssh-key.key -A -L 8080:localhost:8080
 ```
+Setup do kafka-ui:
+![setup](images/34_kafkaUI-setup.png "setup")
 
-Existe outra opção de UI, a [akhq.io](https://akhq.io/), que não testamos porque seu arquivo de configuração era bem complexo.
+Dashboard:
+![dashboard](images/35_kafkaUI-dashboard.png "dashboard")
+
+Brokers e demais opções:
+![brokers](images/36_kafkaUI-brokers.png "brokers")
+
+Existe outra opção de UI, a [akhq.io](https://akhq.io/).
 
 ## Testes com Mirror Maker 2.0
 >Replicação de mensagens entre diferentes regiões OCI

@@ -15,7 +15,7 @@ public class KafkaMtlsConsumer {
 
    public static void main(String[] args) throws Exception {
        
-      String topic = "ateam-topic-mtls";
+      String topic = "mtls-topic";
 
       Properties properties = PropertiesUtil.loadProperties(Environments.KAFKA_MTLS_CONSUMER);
 
