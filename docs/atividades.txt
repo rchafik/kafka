@@ -390,8 +390,8 @@ Testes com Java e Python para produzir e consumir mensagens
 			
 		para executar o python:
 			cd python
-			python3.9 producer.py kafka
-			python3.9 consumer.py kafka
+			python producer.py kafka
+			python consumer.py kafka
 			
 Script bash para publicação de mensagens durante scale do cluster kafka, para validar que não há interrupção do serviço:
 	ATENÇÃO: testar no cluster produtivo criado para a demonstração.

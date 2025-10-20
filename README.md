@@ -145,7 +145,7 @@ Os arquivos abaixo são exemplos criados e seus arquivos de propriedades utiliza
     bootstrap.servers=cell-1.streaming.sa-saopaulo-1.oci.oraclecloud.com:9092
     security.protocol=SASL_SSL
     sasl.mechanism=PLAIN
-    sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="tenancy/OracleIdentityCloudService/user/ocid1.streampool.oc1.sa-saopaulo-1." password="token";
+    sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="tenancy/YourDomainOrNotTestIt/user/ocid1.streampool.oc1.sa-saopaulo-1." password="yourAuthToken";
     group.id=group-java
     enable.auto.commit=true
     auto.commit.interval.ms=1000
@@ -155,9 +155,32 @@ Os arquivos abaixo são exemplos criados e seus arquivos de propriedades utiliza
     #limit request size to 1MB per partition = = 1024 x 1024
     max.partition.fetch.bytes=1048576
     ```
+ 
+ - Exemplos de como produzir e consumir mensagens do Streaming usando os binários do Kafka (mais adiante teremos detalhes de como realizar a instalação e configuração destes binários):
+
+    ```
+    #arquivo streaming.properties
+    security.protocol=SASL_SSL
+    sasl.mechanism=PLAIN
+    sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username='tenancy/YourDomainOrNotTestIt/user/ocid1.streampool.oc1.sa-saopaulo-1.' password='yourAuthToken';
+    enable.idempotence=false
+
+    #produzir mensagem
+    kafka-console-producer.sh \
+    --bootstrap-server cell-1.streaming.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+    --topic chafikStream \
+    --producer.config streaming.properties
+
+    #consumir mensagem
+    kafka-console-consumer.sh \
+    --bootstrap-server cell-1.streaming.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+    --topic chafikStream --from-beginning \
+    --consumer.config streaming.properties    
+    ```
 
 **Referências sobre Streaming:**
   - [Início Rápido do Kafka Java Client e do Serviço Streaming](https://docs.oracle.com/pt-br/iaas/Content/Streaming/Tasks/streaming-kafka-java-client-quickstart.htm#kafka-java-quickstart)
+  - [Using Streaming with Apache Kafka](https://docs.oracle.com/en-us/iaas/Content/Streaming/Tasks/kafkacompatibility.htm)
 
 
 # Kafka
