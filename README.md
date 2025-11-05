@@ -630,7 +630,49 @@ Dashboard:
 Brokers e demais opções:
 ![brokers](images/36_kafkaUI-brokers.png "brokers")
 
-Existe outra opção de UI, a [akhq.io](https://akhq.io/).
+Existe outra opção de UI, a [akhq.io](https://akhq.io/):
+  - realizamos o download do arquivo akhq-0.26.0-all.jar;
+  - o arquivo está localizado dentro de [releases](https://github.com/tchiotludo/akhq/releases)
+
+Será necessário criar um arquivo de configuração, por exemplo cluster.yaml:
+
+```
+akhq:
+  connections:
+   oci-gru:
+      properties:
+        bootstrap.servers: bootstrap-xxx.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092
+        security.protocol: SASL_SSL
+        sasl.mechanism: SCRAM-SHA-512
+        sasl.jaas.config: org.apache.kafka.common.security.scram.ScramLoginModule required username="super-user-xxx" password="xxx";
+   oci-vcp:
+      properties:
+        bootstrap.servers: bootstrap-yyy.kafka.sa-vinhedo-1.oci.oraclecloud.com:9092
+        security.protocol: SASL_SSL
+        sasl.mechanism: SCRAM-SHA-512
+        sasl.jaas.config: org.apache.kafka.common.security.scram.ScramLoginModule required username="super-user-yyy" password="yyy";
+```
+
+Depois executar o comando abaixo, utilizando na propriedade **micronaut.config.files** o path do arquivo de configuração, que vai iniciar a interface na porta **8080**:
+
+```
+java -Dmicronaut.config.files=/home/opc/akhq.io/cluster.yaml -jar akhq-0.26.0-all.jar
+```
+
+Acesse o seu ambiente utilizando [localhost](http://localhost:8080) ou [ip público](http://ip.publico.com:8080):
+  - Verifique sua security, se a porta 8080 está liberada;
+  - Anteriormente, explicamos como criar um túnel via e possibilitar a comunicação usando o navegador local;
+  - Caso esteja utilizando uma VM, e já tenha ajustado a sua security lista, talvez você tenha que desligar temporariamente o firewall da sua VM:
+
+  ```
+    #parar o serviço
+    sudo systemctl stop firewalld
+
+    #iniciar o serviço
+    sudo systemctl start firewalld
+  ```
+
+![akhq.io](images/37_kafkaUI-akhq.png "akhq.io")
 
 ## Testes com Mirror Maker 2.0
 >Replicação de mensagens entre diferentes regiões OCI
