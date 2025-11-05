@@ -740,9 +740,12 @@ offset-syncs.topic.replication.factor=1
 offset.storage.replication.factor=1
 status.storage.replication.factor=1
 config.storage.replication.factor=1
+
+#se esse parâmetro estiver habilitado, o ACL do tópico será replicado, menos a permissão de Write
+sync.topic.acls.enabled = false
 ```
 
-Comando para executar o Mirror:
+Comando para executar o Mirror Maker:
 >Esse arquivo já está na instalação do kafka quando o mesmo foi baixado e instalado na VM
 
 ```
@@ -753,6 +756,8 @@ Referências:
 
 - [Como usar o Kafka MirrorMaker 2.0 na migração e replicação de dados e nos casos de uso](https://learn.microsoft.com/pt-br/azure/hdinsight/kafka/kafka-mirrormaker-2-0-guide)
 - [Setup Apache Kafka Mirror Maker 2.0 in Oracle OCI Streaming With Apache Kafka ACTIVE/ACTIVE](https://github.com/jctarla/oci-managed-kafka-mirror-maker)
+- [KafkaMirrorMaker2 does not mirror Write permission ACLs for topics](https://github.com/orgs/strimzi/discussions/5419)
+- [Kafka MirrorMaker 2 from ReadOnly Cluster](https://medium.com/norsk-helsenett/kafka-mirrormaker-2-from-readonly-cluster-e8ef9607541c)
 
 
 **Testes com Schema Registry e artefatos Avro**
@@ -1890,3 +1895,4 @@ Referências:
 - Rodrigo Pace de Barros (Oracle LAD A-Team Security Specialist)
 - John Moore (Consulting Member of Technical Staff)
 - Abhishek Bhaumik (Product Manager)
+- Adriano Tanaka (Cloud Engineer)
