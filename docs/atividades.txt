@@ -164,6 +164,10 @@ Criação Compute, para os labs usando VsCode se conectando remotamente
 		#jdk 17
 			sudo dnf install -y jdk-17-headful
 		
+		#alguns links adicionais para auxiliar, caso decidam utilizar outra versão da JdK
+		#	- https://docs.oracle.com/en/learn/ol-java-install/index.html
+		#	- https://irsyadsec.medium.com/java-not-found-in-update-alternatives-config-java-after-installing-java-on-linux-d88e499e5c4f
+		
 		#instalar o kafka nas máquinas
 			cd ~
 			mkdir kafka
