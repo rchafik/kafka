@@ -33,7 +33,7 @@
       <scope>test</scope>
     </dependency>
 
-  <!-- https://mvnrepository.com/artifact/com.oracle.oci.sdk/oci-java-sdk-streaming -->
+  <!-- https://mvnrepository.com/artifact/com.oracle.oci.sdk/oci-java-sdk-streaming  -->
   <dependency>
       <groupId>com.oracle.oci.sdk</groupId>
       <artifactId>oci-java-sdk-streaming</artifactId>
