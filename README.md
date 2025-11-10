@@ -373,21 +373,21 @@ ssl.keystore.location=/home/opc/kafka/kafka-keystore.p12
 **Comandos kafka com SSL (mTLS)**
 ```
 kafka-topics.sh --create \
-  --bootstrap-server bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
+  --bootstrap-server bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
   --partitions 2 \
   --topic ateam-topic \
   --command-config /home/opc/kafka/kafkaclient.properties
   
 kafka-console-producer.sh \
---broker-list bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
+--broker-list bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
 --topic ateam-topic --producer.config /home/opc/kafka/kafkaclient.properties
 
 kafka-console-consumer.sh \
---bootstrap-server bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
+--bootstrap-server bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
  --topic ateam-topic --from-beginning --consumer.config /home/opc/kafka/kafkaclient.properties
 
 kafka-topics.sh --list \
-  --bootstrap-server bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
+  --bootstrap-server bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
   --command-config /home/opc/kafka/kafkaclient.properties
 ```
 
@@ -396,7 +396,7 @@ kafka-topics.sh --list \
 - Classe KafkaMtlsProducer.java e kafka-mtls-producer.properties:
 
   ```
-  bootstrap.servers=bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093
+  bootstrap.servers=bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093
   security.protocol=SSL
   ssl.keystore.location=/home/opc/kafka/kafka-keystore.p12
   ssl.keystore.password=ateam
@@ -407,7 +407,7 @@ kafka-topics.sh --list \
 - Classe KafkaMtlsConsumer.java e kafka-mtls-consumer.properties:
 
   ```
-  bootstrap.servers=bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093
+  bootstrap.servers=bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093
   security.protocol=SSL
   ssl.keystore.location=/home/opc/kafka/kafka-keystore.p12
   ssl.keystore.password=ateam
@@ -434,7 +434,7 @@ sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule require
 - Classe KafkaSASL_SSLProducer.java e kafka-sasl-ssl-producer.properties:
 
   ```
-  bootstrap.servers=bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092
+  bootstrap.servers=bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092
   security.protocol=SASL_SSL
   sasl.mechanism=SCRAM-SHA-512
   sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="super-user" password="senha";
@@ -445,7 +445,7 @@ sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule require
 - Classe KafkaSASL_SSLConsumer.java e kafka-sasl-ssl-consumer.properties:
 
   ```
-  bootstrap.servers=bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092
+  bootstrap.servers=bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092
   security.protocol=SASL_SSL
   sasl.mechanism=SCRAM-SHA-512
   sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="super-user" password="senha";
@@ -460,26 +460,40 @@ sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule require
 **Comando kafka com SASL_SSL**
 
 ```
-kafka-broker-api-versions.sh --bootstrap-server bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 --command-config kafkasasl.properties
+kafka-broker-api-versions.sh --bootstrap-server bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 --command-config kafkasasl.properties
 ```
 **Usando Super User para criar novo usuário e realizar configuração de ACL**
 >Importante: para realizar as configurações de ACL, deve-se usar o super user e SASL-SCRAM.
 
 ```
-kafka-configs.sh --bootstrap-server bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+kafka-configs.sh --bootstrap-server bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
   --alter --add-config "SCRAM-SHA-512=[password=ateam2025]" \
   --entity-type users --entity-name ateamUser \
   --command-config kafkasasl.properties
   
-kafka-acls.sh --bootstrap-server bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+kafka-acls.sh --bootstrap-server bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
   --add --allow-principal User:ateamUser \
   --operation Read --operation Write --operation Describe \
   --topic ateam-topic \
   --command-config kafkasasl.properties
   
-kafka-acls.sh --bootstrap-server bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+kafka-acls.sh --bootstrap-server bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
   --add --allow-principal User:ateamUser \
   --operation Read --operation Describe --group group-0 \
+  --command-config kafkasasl.properties
+
+#listar os usuários
+kafka-configs.sh \
+  --bootstrap-server  bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+  --describe \
+  --entity-type users \
+  --command-config kafkasasl.properties
+
+#listar os ACLs configurados para o tópico
+kafka-acls.sh \
+  --bootstrap-server bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+  --list \
+  --topic ateam-topic \
   --command-config kafkasasl.properties
 
 ```
@@ -498,20 +512,20 @@ Para criar a fila e suas permissões, usamos a conexão SASL-SCRAM, e o subject 
 
 ```
 kafka-topics.sh --create \
---bootstrap-server bootstrap-clstr-7qwubqtlny66bzpo.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+--bootstrap-server bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
 --partitions 1 \
 --topic teste-mtls \
 --command-config kafkasasl.properties
 
 kafka-acls.sh \
---bootstrap-server bootstrap-clstr-7qwubqtlny66bzpo.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+--bootstrap-server bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
 --add --allow-principal "User:CN=Test" \
 --operation Read --operation Write --operation Describe \
 --topic teste-mtls \
 --command-config kafkasasl.properties
 
 kafka-acls.sh \
---bootstrap-server bootstrap-clstr-7qwubqtlny66bzpo.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+--bootstrap-server bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
 --add --allow-principal "User:CN=Test" \
 --operation Read --operation Describe --group '*' \
 --command-config kafkasasl.properties
@@ -522,14 +536,14 @@ Aqui usamos o mTLS para produzir e consumir as mensagens, usando o certificado c
 
 ```
 kafka-console-consumer.sh \
---bootstrap-server bootstrap-clstr-7qwubqtlny66bzpo.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
+--bootstrap-server bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
 --topic teste-mtls \
 --from-beginning \
 --consumer.config kafkaclient.properties
 
 
 kafka-console-producer.sh \
---broker-list bootstrap-clstr-7qwubqtlny66bzpo.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
+--broker-list bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
 --topic teste-mtls \
 --producer.config kafkaclient.properties
 ```
@@ -564,36 +578,36 @@ Para configurar o ACL, retiramos a string **subject=**:
 
 ```
 		kafka-topics.sh --delete \
-		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+		--bootstrap-server bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
 		--topic mtls-topic-vader \
 		--command-config sasl.properties		
 		
 		kafka-topics.sh --create \
-		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+		--bootstrap-server bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
 		--partitions 1 \
 		--topic mtls-topic-vader \
 		--command-config sasl.properties		
 
 		kafka-acls.sh \
-		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+		--bootstrap-server bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
 		--add --allow-principal "User:CN=vader,OU=ateam,O=Oracle,L=SaoPaulo,ST=SP,C=BR" \
 		--operation Read --operation Write --operation Describe    \
 		--topic mtls-topic-vader  \
 		--command-config sasl.properties
 		
 		kafka-acls.sh \
-		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
+		--bootstrap-server bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092 \
 		--add --allow-principal "User:CN=vader,OU=ateam,O=Oracle,L=SaoPaulo,ST=SP,C=BR" \
 		--operation Read --operation Describe --group '*' \
 		--command-config sasl.properties		
 
 		kafka-console-producer.sh \
-		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
+		--bootstrap-server bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
 		--topic mtls-topic-vader \
 		--producer.config mtls-vader.properties
 		
 		kafka-console-consumer.sh \
-		--bootstrap-server bootstrap-clstr-hutc7nmxq3a6bvmf.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
+		--bootstrap-server bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9093 \
 		--topic mtls-topic-vader --from-beginning \
 		--consumer.config mtls-vader.properties
 ```
@@ -931,7 +945,7 @@ Criamos as classes abaixo para trabalharmos com Avro e conectar no Schema Regist
   - kafka-sasl-ssl-avro-producer.properties
 
     ```
-    bootstrap.servers=bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092
+    bootstrap.servers=bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092
     security.protocol=SASL_SSL
     sasl.mechanism=SCRAM-SHA-512
     ssl.truststore.location=/home/opc/kafka/truststore.jks
@@ -970,7 +984,7 @@ Criamos as classes abaixo para trabalharmos com Avro e conectar no Schema Regist
   - kafka-sasl-ssl-avro-consumer.properties
 
     ```
-    bootstrap.servers=bootstrap-clstr-btaxq3z9d0ziwk0g.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092
+    bootstrap.servers=bootstrap-clstr-your-kafka.kafka.sa-saopaulo-1.oci.oraclecloud.com:9092
     security.protocol=SASL_SSL
     sasl.mechanism=SCRAM-SHA-512
     ssl.truststore.location=/home/opc/kafka/truststore.jks
