@@ -816,7 +816,7 @@ Referências:
 - [Kafka MirrorMaker 2 from ReadOnly Cluster](https://medium.com/norsk-helsenett/kafka-mirrormaker-2-from-readonly-cluster-e8ef9607541c)
 
 
-**Testes com Schema Registry e artefatos Avro**
+## Testes com Schema Registry e artefatos Avro
 
 Estamos usando o [Apicurio Registry](https://www.apicur.io/registry/), resumindo, foram dois comandos para executar o schema registry:
   >Estamos executando dentro de uma VM que possui acesso ao ambiente Kafka criado
@@ -1004,7 +1004,7 @@ Acessar o artefato criado, aba Versions e clicar na versão existente, conseguim
 
   ![avro artifact](images/10_schemaRegistryAvroDetail.png "avro artifact")
 
-Referências sobre Schema Registry:
+**Referências sobre Schema Registry:**
 
 - [Exemplos de código com Apicurio](https://github.com/Apicurio/apicurio-registry/blob/main/examples/simple-avro)
 
@@ -1012,7 +1012,7 @@ Referências sobre Schema Registry:
 
 - [Exemplos de código com Karapace](https://instaclustr.medium.com/exploring-karapace-the-open-source-schema-registry-for-apache-kafka-part-1-apache-avro-3a7d09fcb4a8)
 
-# Testes com mTLS do Kafka, usando OCI Certificate Authority e ACL Kafka (em andamento)
+## Testes com mTLS do Kafka, usando OCI Certificate Authority e ACL Kafka
 
 Visão alto nível dos componentes:
 
@@ -1041,7 +1041,7 @@ Versão openssl depois de atualizar, seguimos os links que constam como referên
     OpenSSL 3.1.3 19 Sep 2023 (Library: OpenSSL 3.1.3 19 Sep 2023)
   ```
 
-**Criação e Configuração deda Master Encryption Key da CA**
+**Criação e Configuração Master Encryption Key da CA**
 
 Criação da chave privada da CA
  
@@ -1262,9 +1262,6 @@ Vamos atualizar o Kafka Cluster via [oci cli] com o conteúdo deste arquivo da C
   --kafka-cluster-id ocid1.kafkacluster.oc1.sa-vinhedo-1.xxx \
   --region sa-vinhedo-1  
  ```    
-
-**Problema** encontrado no Kafka Cluster em , pois após realizar esse procedimento a porta de mTLS (9093) para de responder.
-Reportado no canal do slack, ao PM e ao Tech Leader, aguardando resolução.
 
 **Setup dos Clientes com mTLS assinados pela CA**
 
